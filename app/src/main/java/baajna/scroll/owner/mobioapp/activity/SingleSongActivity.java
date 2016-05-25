@@ -1,11 +1,15 @@
 package baajna.scroll.owner.mobioapp.activity;
 
+import android.Manifest;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.graphics.drawable.GradientDrawable;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -30,6 +34,7 @@ import baajna.scroll.owner.mobioapp.datamodel.MoAlbum;
 import baajna.scroll.owner.mobioapp.datamodel.MoPlayList;
 import baajna.scroll.owner.mobioapp.parser.CommunicationLayer;
 import baajna.scroll.owner.mobioapp.utils.AlphaForeGroundColorSpan;
+import baajna.scroll.owner.mobioapp.utils.Globals;
 import baajna.scroll.owner.mobioapp.utils.MyApp;
 import baajna.scroll.owner.mobioapp.utils.ScrollViewHelper;
 import baajna.scroll.owner.mobioapp.utils.Urls;
@@ -194,6 +199,34 @@ public class SingleSongActivity extends AppCompatActivity {
         DbManager myDb = new DbManager(this);
         song = myDb.getSong(song_id);
         myDb.close();
+    }
+
+    public  boolean isStoragePermissionGranted() {
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    == PackageManager.PERMISSION_GRANTED) {
+
+                return true;
+            } else {
+
+
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+                return false;
+            }
+        }
+        else { //permission is automatically granted on sdk<23 upon installation
+            return true;
+        }
+
+
+    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if(grantResults[0]== PackageManager.PERMISSION_GRANTED){
+            Globals.isStoragePerGranted=true;
+            //resume tasks needing this permission
+        }
     }
     private void prepareDis() {
         final int position;
@@ -360,8 +393,13 @@ public class SingleSongActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                if (InternetConnectivity.isConnectedToInternet(context)) {
+                if (InternetConnectivity.isConnectedToInternet(context) ) {
+                    if(Globals.isStoragePerGranted)
                     CommunicationLayer.getInstance().getDownloadFile("1", song_id + "");
+
+                    else {
+                        isStoragePermissionGranted();
+                    }
                     // new DownloadAsyncTask("1").execute("http://192.168.1.145/sparkle/uploads/song_file/4a0d741498b0655405f66d1f42d72e2c.mp3");
                 }
 

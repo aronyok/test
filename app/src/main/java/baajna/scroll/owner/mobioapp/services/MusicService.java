@@ -120,21 +120,25 @@ public class MusicService extends Service implements
         if (player == null)
             initMusicPlayer();
         if (intent != null) {
+
             if (intent.getAction().equals(MAIN_ACTION)) {
                 Log.e("Jewel", "S-MAIN");
                 if (!player.isPlaying()) {
+                    prepareNotification();
                     playSong(songPosn);
                 } else {
                     player.start();
                 }
             } else if (intent.getAction().equals(PREV_ACTION)) {
                 Log.e("Jewel", "S-REV");
+                prepareNotification();
                 playPrev();
 
             } else if (intent.getAction().equals(PLAY_ACTION)) {
+                prepareNotification();
                 Log.e("Jewel", "S-PLAY-pause");
                 if (player.isPlaying()) {
-                    prepareNotification();
+
                     playPause();
                     notificationView.setImageViewResource(R.id.not_play, R.drawable.play_icon);
                     notificationView.setViewVisibility(R.id.not_stop, View.VISIBLE);
@@ -157,9 +161,11 @@ public class MusicService extends Service implements
 
 
             } else if (intent.getAction().equals(NEXT_ACTION)) {
+                prepareNotification();
                 Log.e("Jewel", "S-NEXT");
                 playNext();
             } else if (intent.getAction().equals(STARTFOREGROUND_ACTION)) {
+                prepareNotification();
                 Log.e("Jewel", "S-START");
                 startForeground(1, not);
             } else if (intent.getAction().equals(STOPFOREGROUND_ACTION)) {
@@ -171,8 +177,7 @@ public class MusicService extends Service implements
 
             }
 
-        }
-        else{
+        } else {
             Log.e("Jewel", "S-Nothing");
 
         }
