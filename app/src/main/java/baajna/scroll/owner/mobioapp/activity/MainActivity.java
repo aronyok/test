@@ -58,6 +58,7 @@ import cz.msebera.android.httpclient.Header;
 import com.mobioapp.baajna.R;
 import com.squareup.picasso.Picasso;
 
+
 public class MainActivity extends AppCompatActivity implements IMusic {
 
 
@@ -70,12 +71,9 @@ public class MainActivity extends AppCompatActivity implements IMusic {
     private DrawerLayout drawerLayout;
     private Toolbar toolbar;
     private FragmentManager fm;
-    private MoSong moSong;
+
 
     private ArrayList<String> titles;
-
-
-    private Handler handler;
 
 
     public ActionBar actionBar;
@@ -86,6 +84,9 @@ public class MainActivity extends AppCompatActivity implements IMusic {
 
     private String title, album,imageSong;
     private OnUpdateUI onUpdateUI;
+
+    private MoSong runningSong;
+    private int runningSongID;
 
     private Context context;
 
@@ -129,8 +130,10 @@ public class MainActivity extends AppCompatActivity implements IMusic {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (handler != null)
-            handler.removeCallbacksAndMessages(null);
+    Log.e("MAin", "destroy");
+        Intent startIntent = new Intent(this, MusicService.class);
+        startIntent.setAction(MusicService.STARTFOREGROUND_ACTION);
+        startService(startIntent);
 
     }
 
@@ -148,6 +151,8 @@ public class MainActivity extends AppCompatActivity implements IMusic {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         actionBar = getSupportActionBar();
 
+
+        MusicService.setUpdateInterface(this);
         alertDialog = new AlertDialog.Builder(activity).create();
 
 
@@ -162,9 +167,6 @@ public class MainActivity extends AppCompatActivity implements IMusic {
         btnCancel = (ImageView) findViewById(R.id.btn_cancel);
         mLayout = (SlidingUpPanelLayout) findViewById(R.id.sliding_layout);
         navigationView = (NavigationView) findViewById(R.id.navigationView);
-        handler = new Handler();
-
-
 
         if (titles == null)
             titles = new ArrayList<>();
@@ -274,7 +276,7 @@ public class MainActivity extends AppCompatActivity implements IMusic {
         if (MusicService.playerState == MusicService.STATE_PLAYING) {
             title = MusicService.getRunningSongTitle();
             album = MusicService.getRunningSongAlbum();
-            imageSong=MusicService.getRunningSongImage();
+
             Log.d("Sajal","Song : "+imageSong);
             songbarPlayButton.setBackgroundResource(R.drawable.pause_icon);
             songbarPlayButton.setEnabled(true);
@@ -289,13 +291,18 @@ public class MainActivity extends AppCompatActivity implements IMusic {
         }
         tvSongTitle.setText(title);
         tvSongAlbum.setText(album);
-        //imageView_SongBar.setBackgroundResource();
 
+        if(runningSong!=null && runningSongID!=runningSong.getId()) {
+            runningSongID=runningSong.getId();
+            final String imgUrl= runningSong.getImgUrl().isEmpty()? Urls.BASE_URL+Urls.IMG_SONG +"6e83e5d5fee89ad93c147322a1314076.jpg":Urls.BASE_URL+Urls.IMG_SONG +runningSong.getImgUrl();
+            Log.e("PIC", imgUrl);
 
-        //imageView_SongBar.setImageURI(Uri.parse(imageSong));
-        //imageView_SongBar.setImageURI(Uri.parse(DbManager.SQL_SONGS_PLAYLIST_RUNNING));
+                    Picasso.with(context)
+                            .load(imgUrl)
+                            .placeholder(R.drawable.sync_icon)
+                            .into(imageView_SongBar);
 
-        // Log.d("Jewel", "call from M :" + MusicService.playerState);
+        }
     }
 
     private void updateUI() {
@@ -346,7 +353,8 @@ public class MainActivity extends AppCompatActivity implements IMusic {
 
 
     @Override
-    public void onUpdate(MediaPlayer mediaPlayer) {
+    public void onUpdate(MediaPlayer mediaPlayer,MoSong runningSong) {
+        this.runningSong=runningSong;
         prepareBottomPlayer();
     }
 
@@ -354,6 +362,7 @@ public class MainActivity extends AppCompatActivity implements IMusic {
         Intent startIntent = new Intent(this, MusicService.class);
         startIntent.setAction(MusicService.NORMAL_ACTION);
         startService(startIntent);
+        MusicService.setUpdateInterface(this);
     }
 
     private void syncSongInfo(){

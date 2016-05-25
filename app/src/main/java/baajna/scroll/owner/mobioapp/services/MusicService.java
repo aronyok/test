@@ -58,7 +58,6 @@ public class MusicService extends Service implements
 
 
     private static int song_id;
-    MoSong song;
     //media player
     public static MediaPlayer player;
     public static NotificationCompat.Builder builder;
@@ -87,6 +86,8 @@ public class MusicService extends Service implements
     public static final int STATE_STOP = 4;
     public static final int STATE_LOADING = 5;
 
+    private static MoSong runningSong;
+
     private static Context context;
 
 
@@ -114,22 +115,26 @@ public class MusicService extends Service implements
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        Log.d("Jewel", "Started service");
+        Log.e("Jewel", "Started service");
         isCreated = true;
         if (player == null)
             initMusicPlayer();
-        if (intent != null)
+        if (intent != null) {
             if (intent.getAction().equals(MAIN_ACTION)) {
+                Log.e("Jewel", "S-MAIN");
                 if (!player.isPlaying()) {
                     playSong(songPosn);
                 } else {
                     player.start();
                 }
             } else if (intent.getAction().equals(PREV_ACTION)) {
+                Log.e("Jewel", "S-REV");
                 playPrev();
 
             } else if (intent.getAction().equals(PLAY_ACTION)) {
+                Log.e("Jewel", "S-PLAY-pause");
                 if (player.isPlaying()) {
+                    prepareNotification();
                     playPause();
                     notificationView.setImageViewResource(R.id.not_play, R.drawable.play_icon);
                     notificationView.setViewVisibility(R.id.not_stop, View.VISIBLE);
@@ -147,18 +152,30 @@ public class MusicService extends Service implements
 
                 }
                 if (iMusic != null) {
-                    iMusic.onUpdate(player);
+                    iMusic.onUpdate(player, runningSong);
                 }
 
 
             } else if (intent.getAction().equals(NEXT_ACTION)) {
+                Log.e("Jewel", "S-NEXT");
                 playNext();
             } else if (intent.getAction().equals(STARTFOREGROUND_ACTION)) {
+                Log.e("Jewel", "S-START");
                 startForeground(1, not);
             } else if (intent.getAction().equals(STOPFOREGROUND_ACTION)) {
+                Log.e("Jewel", "S-STOP");
                 isRunning = false;
                 stopSelf();
+            }else if(intent.getAction().equals(NORMAL_ACTION)){
+                Log.e("Jewel", "S-normal");
+
             }
+
+        }
+        else{
+            Log.e("Jewel", "S-Nothing");
+
+        }
 
 
         return START_STICKY;
@@ -171,12 +188,13 @@ public class MusicService extends Service implements
 
     //play a song
     public static void playSong(int pos) {
+        Log.e("Jewel", "S-PLAYSONG");
         if (player == null)
             initMusicPlayer();
         isRunning = false;
         playerState = STATE_NOT_READY;
         if (iMusic != null) {
-            iMusic.onUpdate(player);
+            iMusic.onUpdate(player,runningSong);
         }
 
 
@@ -189,12 +207,12 @@ public class MusicService extends Service implements
 
         //get song
         if (songs != null && songs.size() > 0) {
-            MoSong song = songs.get(songPosn);
+            runningSong = songs.get(songPosn);
 
             //get title
-            songTitle = song.getTitle();
+            songTitle = runningSong.getTitle();
 
-            if (song.getIsDownloaded() == 1) {
+            if (runningSong.getIsDownloaded() == 1) {
                 try {
                     Decryption decryption = new Decryption();
                     byte[] data = decryption.decrypt(decryption.getAudioFileFromSdCard(songs.get(songPosn).getFileName()));
@@ -214,7 +232,7 @@ public class MusicService extends Service implements
                 //set the data source
                 try {
 
-                    player.setDataSource(MyApp.getAppContext(), Uri.parse(SparkleApp.getInstance().getSongUrl(song.getFileName())));
+                    player.setDataSource(MyApp.getAppContext(), Uri.parse(SparkleApp.getInstance().getSongUrl(runningSong.getFileName())));
 
                     saveSongStatus(songs.get(songPosn).getId(), "live", 0);
 
@@ -281,7 +299,7 @@ public class MusicService extends Service implements
         playSong(songPosn);
 
         if (iMusic != null) {
-            iMusic.onUpdate(player);
+            iMusic.onUpdate(player,runningSong);
         }
     }
 
@@ -303,41 +321,15 @@ public class MusicService extends Service implements
         }
         playSong(songPosn);
         if (iMusic != null) {
-            iMusic.onUpdate(player);
+            iMusic.onUpdate(player,runningSong);
         }
     }
 
-    public static void remoteStop() {
-        isRunning = false;
-        player.stop();
-        player.release();
-        player = null;
-        mNotificationManager.cancel(NOTIFY_ID);
-        if (iMusic != null) {
-            iMusic.onUpdate(player);
-        }
-    }
 
-    //playback methods
-    public static int getPosn() {
-        if (isRunning)
-            return player.getCurrentPosition();
-        return 0;
-    }
 
-    public static int getDur() {
-
-        return player.getDuration();
-    }
-
-    public static boolean isPlaying() {
-        if (player != null)
-            return player.isPlaying();
-        return false;
-    }
 
     public static void playPause() {
-
+        Log.e("Jewel", "S-play-pause");
         if (playerState == STATE_NOT_READY || playerState == STATE_STOP || playerState == 0)
             playSong(songPosn);
             //Log.d("Jewel","Call first: "+playerState);
@@ -371,7 +363,8 @@ public class MusicService extends Service implements
         }
 
         if (iMusic != null) {
-            iMusic.onUpdate(player);
+            Log.e("SERVICE","play");
+            iMusic.onUpdate(player,runningSong);
         }
     }
 
@@ -380,9 +373,7 @@ public class MusicService extends Service implements
         player.seekTo(posn);
     }
 
-    public static void go() {
-        player.start();
-    }
+
 
     public static String getRunningSongTitle() {
         return songs.get(songPosn).getTitle();
@@ -392,11 +383,7 @@ public class MusicService extends Service implements
         return (songs != null && isRunning) ? songs.get(songPosn).getArtist_name():" ";
     }
 
-    public static  String getRunningSongImage(){
-        Log.d("Sajal","Song : "+songs.get(songPosn).getImgUrl());
-        return songs.get(songPosn).getImgUrl();
 
-    }
 
     public static void setShuffle() {
         shuffle = !shuffle;
@@ -425,14 +412,14 @@ public class MusicService extends Service implements
 
     @Override
     public void onPrepared(MediaPlayer mp) {
-
+Log.e("MUSIC","on prepare");
         playerState = STATE_PLAYING;
         isRunning = true;
         mp.start();
         prepareNotification();
 
         if (iMusic != null) {
-            iMusic.onUpdate(player);
+            iMusic.onUpdate(player,runningSong);
         }
 
 
@@ -460,6 +447,7 @@ public class MusicService extends Service implements
 
     @Override
     public void onDestroy() {
+        Log.e("MUSIC","destroy");
         if (songs != null) {
             new Utils().saveSharedPref(Globals.LAST_SONG_ID, songs.get(songPosn).getId() + "");
         }
@@ -473,7 +461,7 @@ public class MusicService extends Service implements
         playerState = STATE_STOP;
         mNotificationManager.cancel(NOTIFY_ID);
         if (iMusic != null) {
-            iMusic.onUpdate(player);
+            iMusic.onUpdate(player,runningSong);
         }
 
     }
@@ -486,7 +474,7 @@ public class MusicService extends Service implements
 
 
         Intent intent = new Intent(MyApp.getAppContext(), MainActivity.class);
-        //intent.setAction(MAIN_ACTION);
+        intent.setAction(STARTFOREGROUND_ACTION);
         //intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(MyApp.getAppContext(), 0, intent, 0);
 
@@ -546,52 +534,11 @@ public class MusicService extends Service implements
     public void onBufferingUpdate(MediaPlayer mp, int percent) {
         Log.d("Jewel", " update : " + percent);
         if (iMusic != null) {
-            iMusic.onUpdate(player);
+            iMusic.onUpdate(player,runningSong);
         }
     }
 
-    /*private void callOnline()  {
-        Log.e("Music","found" );
-        if (InternetConnectivity.isConnectedToInternet(this)) {
-            AsyncHttpClient client = new AsyncHttpClient();
-            RequestParams params = new RequestParams();
-            Log.e("Music","id:"+songs.get(songPosn).getId());
-            JSONObject j=new JSONObject();
-            try {
-                JSONObject jsonObject=new JSONObject();
-                jsonObject.put("song_id",songs.get(songPosn).getId());
-                jsonObject.put("user_app_id","124");
-                jsonObject.put("action","download");
-                jsonObject.put("sync_time", "2016-04-20 12:24:00");
 
-                JSONArray jsonArray=new JSONArray();
-                jsonArray.put(jsonObject);
-
-
-
-                j.put("song_list",jsonArray);
-                //Log.e("JSON", j.toString());
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            params.put("song_list", j.toString());
-            client.post("http://52.89.156.64/index.php/api/songs_count", params, new JsonHttpResponseHandler() {
-                @Override
-                public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-                    super.onSuccess(statusCode, headers, response);
-                    Log.e("JSON______", response.toString());
-                }
-
-                @Override
-                public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                    super.onFailure(statusCode, headers, responseString, throwable);
-                    Log.e("JSON______", responseString);
-                }
-            });
-
-        }
-    }*/
 
     private static void saveSongStatus(int id,String action,int status)  {
         DbManager db=new DbManager(MyApp.getAppContext());
@@ -602,6 +549,8 @@ public class MusicService extends Service implements
         s.setLastMod(CommonFunc.getCurrentTime());
         db.addSongCount(s);
     }
+
+
 
 
 }

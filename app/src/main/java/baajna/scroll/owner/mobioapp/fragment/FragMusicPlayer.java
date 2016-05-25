@@ -55,6 +55,7 @@ public class FragMusicPlayer extends Fragment implements View.OnClickListener, O
     private boolean isShuffle = false;
     private boolean isRepeat = false, isEditable;
     private int currentSong;
+    private MoSong runningSong;
 
     public static FragMyPlaylist getInstance() {
         FragMyPlaylist fragMyPlaylist = new FragMyPlaylist();
@@ -119,7 +120,7 @@ public class FragMusicPlayer extends Fragment implements View.OnClickListener, O
         layShuffle.setOnClickListener(this);
         layLoop.setOnClickListener(this);
 
-        MusicService.setUpdateInterface(this);
+        //MusicService.setUpdateInterface(this);
 
 
         seekBar.setClickable(false);
@@ -352,8 +353,8 @@ public class FragMusicPlayer extends Fragment implements View.OnClickListener, O
     }
 
     @Override
-    public void onUpdate(MediaPlayer mediaPlayer) {
-
+    public void onUpdate(MediaPlayer mediaPlayer,MoSong runningSong) {
+        this.runningSong=runningSong;
         updateMusicPlayer();
         try {
             ((MainActivity) getContext()).prepareBottomPlayer();
