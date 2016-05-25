@@ -1,15 +1,19 @@
 package baajna.scroll.owner.mobioapp.activity;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
@@ -97,7 +101,7 @@ public class MainActivity extends AppCompatActivity implements IMusic {
         setContentView(R.layout.activity_main);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         init();
-
+        isStoragePermissionGranted();
 
         //callOnline();
     }
@@ -130,13 +134,39 @@ public class MainActivity extends AppCompatActivity implements IMusic {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-    Log.e("MAin", "destroy");
+
         Intent startIntent = new Intent(this, MusicService.class);
         startIntent.setAction(MusicService.STARTFOREGROUND_ACTION);
         startService(startIntent);
 
     }
+    public  boolean isStoragePermissionGranted() {
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    == PackageManager.PERMISSION_GRANTED) {
 
+                return true;
+            } else {
+
+
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+                return false;
+            }
+        }
+        else { //permission is automatically granted on sdk<23 upon installation
+            return true;
+        }
+
+
+    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if(grantResults[0]== PackageManager.PERMISSION_GRANTED){
+            Globals.isStoragePerGranted=true;
+            //resume tasks needing this permission
+        }
+    }
 
     private void init() {
         activity = this;

@@ -22,6 +22,7 @@ import baajna.scroll.owner.mobioapp.parser.CommunicationLayer;
 import baajna.scroll.owner.mobioapp.datamodel.MoSong;
 import baajna.scroll.owner.mobioapp.localDatabase.DbManager;
 import baajna.scroll.owner.mobioapp.services.MusicService;
+import baajna.scroll.owner.mobioapp.utils.Globals;
 
 import java.util.HashMap;
 import java.util.List;
@@ -191,7 +192,7 @@ public class AdExpandableList extends BaseExpandableListAdapter {
                 if (v == laySongDownload) {
                     imgSongDownload.setImageResource(R.drawable.download_512_active);
                 }
-                if (InternetConnectivity.isConnectedToInternet(_context)) {
+                if (InternetConnectivity.isConnectedToInternet(_context)&& Globals.isStoragePerGranted) {
                     CommunicationLayer.getInstance().getDownloadFile("1", selectedSong.getId() + "");
 
                 }
