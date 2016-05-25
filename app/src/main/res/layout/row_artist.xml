@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/lay_artist_home"
+    android:layout_width="@dimen/dp150"
+    android:layout_height="wrap_content"
+    android:padding="@dimen/dp2"
+    android:background="#e8e8e8"
+    android:orientation="vertical">
+
+
+    <ImageView
+        android:id="@+id/img_new_albums"
+        android:layout_width="@dimen/dp140"
+        android:layout_height="@dimen/dp140"
+        android:scaleType="fitXY"
+        android:src="@drawable/main_myplaylist"/>
+
+    <LinearLayout
+        android:id="@+id/lay_new_release"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#fafafa"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:id="@+id/lay_new_release_desc"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/btn_white_home"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_new_release_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Mone Robe"
+                android:layout_marginLeft="@dimen/dp2"
+                android:gravity="left"
+                android:textSize="@dimen/sp13"
+                android:textColor="#303030"
+                />
+
+            <TextView
+                android:id="@+id/tv_new_release_artist"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textSize="@dimen/sp10"
+                />
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/img_new_release_options"
+            android:layout_width="@dimen/dp20"
+            android:layout_height="@dimen/dp20"
+            android:src="@drawable/options"
+            android:visibility="gone"/>
+
+    </LinearLayout>
+
+
+</LinearLayout>

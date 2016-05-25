@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="55dip"
+    android:padding="@dimen/dp5"
+    android:orientation="horizontal"
+    android:background="@drawable/single_song_background_color">
+
+    <Button
+        android:id="@+id/tv_play_song"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:layout_marginRight="@dimen/dp5"
+        android:background="@drawable/songlist_expandable_color"
+        android:textSize="@dimen/sp13"
+        android:textColor="#FFF"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+
+        android:drawableLeft="@drawable/ic_action_play"
+        android:gravity="center"
+        android:text="Play"
+
+         />
+
+    <Button
+        android:id="@+id/tv_queue_song"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:layout_marginRight="@dimen/dp5"
+        android:background="@drawable/songlist_expandable_color"
+        android:textSize="@dimen/sp13"
+        android:textColor="#FFF"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+
+        android:drawableLeft="@drawable/queue_icon"
+
+        android:text="Queue"
+         />
+
+    <Button
+        android:id="@+id/tv_like_song"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:background="@drawable/songlist_expandable_color"
+        android:textSize="@dimen/sp13"
+        android:textColor="#FFF"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+
+        android:drawableLeft="@drawable/like_button"
+        android:text="Like"
+
+        />
+
+</LinearLayout>

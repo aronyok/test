@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <TextView
+        android:id="@+id/info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:text=" "
+        android:textColor="#fff"
+        android:textSize="18sp"
+        android:visibility="gone"/>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+
+        android:orientation="vertical">
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/pager"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/indicator"
+            android:background="@drawable/start_background_color_mid"
+            android:layout_weight="1" />
+
+        <baajna.viewpagerindicator.CirclePageIndicator
+            android:id="@+id/indicator"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/start_background_color_indicator"
+            android:layout_gravity="center"
+
+            android:padding="@dimen/dp5" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/start_background_color_last">
+
+
+
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:padding="@dimen/dp2"
+                    android:layout_marginTop="@dimen/dp10"
+                    android:layout_marginLeft="@dimen/dp50"
+                    android:layout_marginRight="@dimen/dp50">
+
+                    <Button
+                        android:id="@+id/login"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:background="@drawable/btn_white"
+                        android:onClick="loginAccount"
+                        android:text="LOG IN"
+                        android:textColor="#000000"
+                        android:textSize="@dimen/sp16" />
+                </LinearLayout>
+
+
+
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:padding="@dimen/dp10">
+
+                <com.facebook.login.widget.LoginButton
+                    android:id="@+id/facebookLogin"
+                    android:layout_width="@dimen/dp250"
+                    android:layout_height="@dimen/dp50"
+                    android:layout_centerHorizontal="true"
+                    android:minWidth="@dimen/dp150" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:padding="@dimen/dp2"
+                android:layout_marginLeft="@dimen/dp50"
+                android:layout_marginRight="@dimen/dp50">
+
+                <Button
+                    android:id="@+id/signUp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:background="@drawable/btn_white"
+                    android:onClick="signupAccount"
+                    android:text="SIGN UP"
+                    android:textColor="#000000"
+                    android:textSize="@dimen/sp16" />
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btn_skip"
+                android:layout_width="@dimen/dp60"
+                android:layout_height="@dimen/dp30"
+                android:layout_gravity="center"
+
+                android:background="@android:color/transparent"
+                android:onClick="startAccount"
+                android:text="Skip"
+                android:textColor="#fff"
+                android:textSize="@dimen/sp12" />
+
+
+
+
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+</LinearLayout>

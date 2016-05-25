@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:id="@+id/popup"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="@dimen/dp150"
+    android:layout_height="wrap_content"
+    android:background="@drawable/pop_up_background_color"
+    android:orientation="vertical"
+    android:padding="@dimen/dp10"
+
+    >
+
+    <TextView
+        android:id="@+id/tv_play_all"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/dp10"
+        android:text="Play All"
+        android:textColor="#fff"
+        />
+
+    <TextView
+        android:id="@+id/tv_add_to_queue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/dp10"
+        android:text="Add to Queue"
+        android:textColor="#fff"
+        />
+
+    <TextView
+        android:id="@+id/tv_add_to_playlist"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/dp10"
+        android:text="Add to Playlist"
+        android:textColor="#fff"
+        />
+
+    <TextView
+        android:id="@+id/tv_download"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/dp10"
+        android:text="Download"
+        android:textColor="#fff"
+        android:visibility="gone"
+        />
+
+
+</LinearLayout>

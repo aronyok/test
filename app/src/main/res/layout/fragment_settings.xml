@@ -1,0 +1,137 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity$PlaceholderFragment">
+
+    <Button
+        android:id="@+id/upgrade_button"
+        android:layout_width="260dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="15dp"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/button_upgrade" />
+
+    <ScrollView
+        android:id="@+id/scrollView_settings"
+        android:layout_marginTop="7dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/upgrade_button">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:id="@+id/settings_logout">
+
+            <TextView
+                android:id="@+id/settings_about"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginTop="25dp"
+                android:textColor="#FFFFFF"
+                android:textSize="22sp"
+                android:background="#b4c3d7"
+                android:gravity="center_vertical"
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp"
+                android:text="@string/settings_about" />
+
+            <TextView
+                android:id="@+id/settings_versionInfo"
+                android:layout_width="match_parent"
+                android:layout_height="21dp"
+                android:layout_marginTop="13dp"
+                android:textColor="#337ab7"
+                android:textSize="18sp"
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp"
+                android:text="@string/settings_versionInfo" />
+
+            <TextView
+                android:id="@+id/terms_and_service"
+                android:layout_width="match_parent"
+                android:layout_height="21dp"
+                android:layout_marginTop="13dp"
+                android:textColor="#337ab7"
+                android:textSize="18sp"
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp"
+                android:text="@string/settings_tos" />
+
+            <TextView
+                android:id="@+id/settings_policy"
+                android:layout_width="match_parent"
+                android:layout_height="23dp"
+                android:layout_marginTop="13dp"
+                android:textColor="#337ab7"
+                android:textSize="18sp"
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp"
+                android:text="@string/settings_policy" />
+
+            <TextView
+                android:id="@+id/settings_license"
+                android:layout_width="match_parent"
+                android:layout_height="22dp"
+                android:layout_marginTop="13dp"
+                android:textColor="#337ab7"
+                android:textSize="18sp"
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp"
+                android:text="@string/settings_license" />
+
+            <TextView
+                android:id="@+id/settings_mobileTerms"
+                android:layout_width="match_parent"
+                android:layout_height="22dp"
+                android:layout_marginTop="13dp"
+                android:textColor="#337ab7"
+                android:textSize="18sp"
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp"
+                android:text="@string/settings_mobileTerms" />
+
+
+        </LinearLayout>
+    </ScrollView>
+</RelativeLayout>
+
+
+    <!--
+    <TextView
+    android:id="@+id/settings_accountInfo"
+    android:layout_width="match_parent"
+    android:layout_height="40dp"
+    android:layout_marginTop="20dp"
+    android:textColor="#FFFFFF"
+    android:textSize="20sp"
+    android:background="#b4c3d7"
+    android:gravity="center_vertical"
+    android:paddingLeft="15dp"
+    android:paddingRight="15dp"
+    android:text="@string/settings_accountInfo" />
+
+    <TextView
+    android:id="@+id/settings_changePwd"
+    android:layout_width="match_parent"
+    android:layout_height="23dp"
+    android:layout_marginTop="13dp"
+    android:textColor="#337ab7"
+    android:textSize="18sp"
+    android:paddingLeft="15dp"
+    android:paddingRight="15dp"
+    android:text="@string/settings_changePwd" />
+
+    <TextView
+    android:id="@+id/setings_logout"
+    android:layout_width="match_parent"
+    android:layout_height="23dp"
+    android:layout_marginTop="13dp"
+    android:layout_marginBottom="10dp"
+    android:textColor="#337ab7"
+    android:textSize="18sp"
+    android:paddingLeft="15dp"
+    android:paddingRight="15dp"
+    android:text="@string/settings_logout" />-->

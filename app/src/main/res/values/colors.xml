@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="app_bar">#002860</color>
+    <color name="action_bar">#0099CC</color>
+    <color name="image_border_start">#40990000</color>
+    <color name="image_border_end">#FF660000</color>
+    <color name="image_border_center">#FFFF3333</color>
+
+    <color name="primaryColor">#F00</color>
+    <color name="primaryColorDark">#d3181f</color>
+    <color name="accentColor">#F00</color>
+    <color name="tabsScrollColor">#F00</color>
+    <color name="foreground">@android:color/white</color>
+    <color name="tabBackground">#CCC</color>
+    <color name="pop_up_color">#003d46</color>
+    <color name="holo_blue_dark">#ff0099cc</color>
+    <color name="view_divider_color">#BABABA</color>
+    <color name="view_divider_color_2">#DADADA</color>
+    <color name="white">#FFF</color>
+
+    <color name="l_blue">#909BAA</color>
+    <color name="d_blue">#6D7B92</color>
+    <color name="gray">#CCCCCC</color>
+    <color name="d_gray">#666</color>
+    <color name="black">#000</color>
+    <color name="red">#F00</color>
+
+    <color name="green">#1a849c</color>
+
+    <color name="action_bar_color">#2aa81d</color>
+
+    <color name="next_prog">#cccccc</color>
+
+    <color name="listBack">#ffffff</color>
+    <color name="list_item_pressed">#e0eee0</color>
+    <color name="list_item_normal">#d8f2f1</color>
+    <color name="now_playing">#f5deb3</color>
+    <color name="normal_now_playing">#FC0</color>
+
+    <color name="filter_normal">#2aa81d</color>
+    <color name="filter_pressed">#9DEB94</color>
+    <color name="edit_box">#D6D6C2</color>
+</resources>
+
+

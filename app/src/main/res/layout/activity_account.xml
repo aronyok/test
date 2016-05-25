@@ -1,0 +1,58 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+
+    android:background="@drawable/img_getstarted_1"
+    tools:context="baajna.scroll.owner.mobioapp.activity.AccountActivity">
+
+
+    <TextView
+        android:id="@+id/info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:text=" "
+        android:textColor="#fff"
+        android:textSize="18sp" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center">
+
+
+        <com.facebook.login.widget.LoginButton
+            android:id="@+id/facebookLogin"
+            android:layout_width="250dp"
+            android:layout_height="50dp"
+            android:layout_centerHorizontal="true"
+
+            android:minWidth="150dp" />
+
+
+        <Button
+            android:id="@+id/login"
+            android:layout_width="115dp"
+            android:layout_height="50dp"
+            android:layout_alignLeft="@+id/facebookLogin"
+            android:layout_below="@+id/facebookLogin"
+            android:layout_marginTop="35dp"
+            android:background="@drawable/button_login1"
+            android:minWidth="70dp"
+            android:onClick="loginAccount" />
+
+        <Button
+            android:id="@+id/signUp"
+            android:layout_width="115dp"
+            android:layout_height="50dp"
+            android:layout_alignRight="@+id/facebookLogin"
+            android:layout_below="@+id/facebookLogin"
+            android:layout_marginTop="35dp"
+            android:background="@drawable/button_signup1"
+            android:minWidth="70dp"
+            android:onClick="signupAccount" />
+
+    </RelativeLayout>
+</RelativeLayout>

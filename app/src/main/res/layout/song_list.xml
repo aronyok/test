@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:paddingTop="5dp"
+    android:paddingBottom="5dp">
+
+    <ImageView
+        android:id="@+id/img_view_cover_pic"
+        android:layout_width="100dip"
+        android:layout_height="100dip"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true" />
+
+    <TextView
+        android:id="@+id/txt_view_name"
+        android:layout_width="wrap_content"
+        android:layout_marginTop="25dip"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dip"
+        android:layout_toRightOf="@+id/img_view_cover_pic"
+        android:layout_alignParentTop="true"
+        android:text="Small Text"
+        android:textColor="@color/textcolor_song"
+        android:textStyle="bold"
+        android:textSize="15dp" />
+
+    <TextView
+        android:id="@+id/txt_view_details"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/txt_view_name"
+        android:layout_marginTop="10dip"
+        android:layout_alignLeft="@+id/txt_view_name"
+        android:text="Small Text"
+        android:textColor="@color/textcolor_song" />
+
+    <!--<ImageButton-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:id="@+id/imageButton_songMenu"-->
+    <!--android:layout_alignTop="@+id/img_view_cover_pic"-->
+    <!--android:layout_toRightOf="@+id/txt_view_name"-->
+    <!--android:layout_toEndOf="@+id/txt_view_name"-->
+    <!--android:background="@drawable/song_menus" />-->
+</RelativeLayout>
+

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="all">
+        <item
+            android:id="@+id/d_menu_home"
+            android:checked="true"
+            android:icon="@drawable/home_icon"
+            android:title="Home" />
+        <item
+            android:id="@+id/d_menu_playlist"
+            android:icon="@drawable/my_playlist"
+            android:title="My Playlist" />
+        <item
+            android:icon="@drawable/artist_icon"
+            android:id="@+id/d_menu_artist"
+            android:title="Artists" />
+        <item
+            android:icon="@drawable/album_icon"
+            android:id="@+id/d_menu_album"
+            android:title="Albums" />
+        <item
+            android:icon="@drawable/new_icon"
+            android:id="@+id/d_menu_new_release"
+            android:title="New Release" />
+        <item
+            android:icon="@drawable/sync_download"
+            android:id="@+id/d_menu_donwload"
+            android:title="My Downloads" />
+        <!--<item
+            android:icon="@drawable/settings_icon"
+            android:id="@+id/d_menu_setting"
+            android:title="Setting" />
+        <item
+            android:icon="@drawable/sparkle_icon48"
+            android:id="@+id/d_menu_search"
+            android:title="Search" />
+        <item
+            android:icon="@drawable/sparkle_icon48"
+            android:id="@+id/d_menu_topchart"
+            android:title="Top Charts" />
+        <item
+            android:icon="@drawable/sparkle_icon48"
+            android:id="@+id/d_menu_featured"
+            android:title="Featured playlist" />
+        <item
+            android:icon="@drawable/logout_drawer"
+            android:id="@+id/d_menu_logout"
+            android:title="Logout" />-->
+    </group>
+
+
+</menu>

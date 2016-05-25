@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/lay_album_moods"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <FrameLayout
+        android:id="@+id/row_album_moods"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/img_moods_albums"
+            android:layout_width="@dimen/dp140"
+            android:layout_height="@dimen/dp140"
+            android:layout_gravity="center"
+            android:scaleType="fitXY"
+            android:background="@drawable/image_default" />
+
+        <TextView
+            android:id="@+id/tv_moods_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="Mone Robe"
+            android:textSize="@dimen/sp14"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tv_moods_artist"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:text="Babul Supriyo"
+            android:textSize="@dimen/sp14"
+            android:visibility="gone"/>
+
+
+    </FrameLayout>
+</LinearLayout>

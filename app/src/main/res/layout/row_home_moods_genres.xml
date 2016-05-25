@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/lay_album_home"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/dp180"
+    android:orientation="horizontal">
+
+
+    <FrameLayout
+        android:id="@+id/row_albumhome1"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:layout_marginRight="@dimen/dp10"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/img_new_albums1"
+            android:layout_width="@dimen/dp150"
+            android:layout_height="@dimen/dp150"
+            android:layout_gravity="center"
+            android:padding="@dimen/dp2"
+            android:background="#e8e8e8"
+            android:scaleType="fitXY"
+            />
+
+        <TextView
+            android:id="@+id/tv_new_release_title1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="Mone Robe"
+            android:textSize="@dimen/sp16"
+            android:textStyle="bold"
+            android:textColor="#ffffff"
+            android:visibility="visible"/>
+
+        <TextView
+            android:id="@+id/tv_new_release_artist1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:text="Babul Supriyo"
+            android:textSize="@dimen/sp14"
+            android:visibility="gone"/>
+
+
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/row_albumhome2"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:layout_marginLeft="@dimen/dp301"
+
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/img_new_albums2"
+            android:layout_width="@dimen/dp150"
+            android:layout_height="@dimen/dp150"
+            android:layout_gravity="center"
+            android:padding="@dimen/dp2"
+            android:background="#e8e8e8"
+            android:scaleType="fitXY"
+            />
+
+        <TextView
+            android:id="@+id/tv_new_release_title2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="Mone Robe"
+            android:textColor="#ffffff"
+            android:textSize="@dimen/sp16"
+            android:textStyle="bold"
+            android:visibility="visible"/>
+
+        <TextView
+            android:id="@+id/tv_new_release_artist2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:text="Babul Supriyo"
+            android:textSize="@dimen/sp14"
+            android:visibility="gone"/>
+
+
+    </FrameLayout>
+
+
+</LinearLayout>

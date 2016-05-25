@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="@dimen/dp5"
+    >
+
+    <ImageView
+        android:id="@+id/img_song_album_cover"
+        android:layout_width="@dimen/dp50"
+        android:layout_height="@dimen/dp50"
+        android:padding="@dimen/dp5"
+        android:scaleType="fitXY"
+        android:src="@drawable/rod_boleche" />
+
+    <LinearLayout
+        android:id="@+id/lay_song_id_artist"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_gravity="center"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_song_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/dp10"
+            android:text="Rod Boleche Hobe"
+            android:textColor="#333333"
+            android:textSize="@dimen/sp13" />
+
+        <TextView
+            android:id="@+id/tv_song_album"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/dp10"
+            android:text="Arnob"
+            android:textColor="#999999"
+            android:textSize="@dimen/sp11"/>
+
+
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/img_song_download_icon"
+        android:layout_width="@dimen/dp50"
+        android:layout_height="@dimen/dp40"
+        android:layout_marginBottom="@dimen/dp5"
+        android:layout_marginTop="@dimen/dp5"
+        android:src="@drawable/download_512"
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:id="@+id/lay_song_detail"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/dp50"
+        android:layout_weight="0.2"
+        android:gravity="center">
+
+        <ImageView
+            android:id="@+id/img_song_detail_view_icon"
+            android:layout_width="@dimen/dp20"
+            android:layout_height="@dimen/dp20"
+            android:scaleType="fitXY"
+            android:layout_marginLeft="@dimen/dp10"
+            android:src="@drawable/more_icon" />
+
+    </LinearLayout>
+
+
+
+    <ImageView
+        android:id="@+id/img_song_delete"
+        android:layout_width="@dimen/dp50"
+        android:layout_height="@dimen/dp50"
+        android:src="@drawable/ico_close"
+        android:visibility="gone" />
+
+
+</LinearLayout>

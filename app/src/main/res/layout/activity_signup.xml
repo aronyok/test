@@ -1,0 +1,117 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background_home"
+    android:gravity="center"
+    tools:context="baajna.scroll.owner.mobioapp.activity.SignupActivity">
+
+    <ImageView
+        android:id="@+id/signupBackground"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/background_popup" />
+    <!--useless background image-->
+
+    <TextView
+        android:id="@+id/textview_signupTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="60dp"
+        android:gravity="center"
+        android:text="@string/signupTitle"
+        android:textColor="#283A90"
+        android:textSize="24sp" />
+
+    <AutoCompleteTextView
+        android:id="@+id/auto_complete_textview_signupEmail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/textview_signupTitle"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:layout_marginTop="40dp"
+        android:gravity="center"
+        android:hint="@string/prompt_email"
+        android:inputType="textEmailAddress"
+        android:maxLines="1"
+        android:singleLine="true"
+        android:textColor="#999999" />
+
+    <EditText
+        android:id="@+id/edittext_password"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/auto_complete_textview_signupEmail"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:gravity="center"
+        android:inputType="textPassword"
+        android:hint="@string/signup_password"
+        android:textColor="#999999" />
+
+    <EditText
+        android:id="@+id/edittext_confirm_password"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/edittext_password"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:layout_marginTop="20dp"
+        android:gravity="center"
+
+        android:hint="@string/signup_password_confirmation"
+        android:imeActionLabel="@string/action_sign_up_confirmation_short"
+        android:imeOptions="actionUnspecified"
+        android:inputType="textPassword"
+        android:maxLines="1"
+        android:singleLine="true"
+        android:textColor="#999999" />
+
+    <Button
+        android:id="@+id/btn_signup"
+        android:layout_width="260dp"
+        android:layout_height="40dp"
+        android:layout_below="@id/edittext_confirm_password"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="50dp"
+        android:layout_marginTop="30dp"
+        android:background="@drawable/button_signup3" />
+
+    <LinearLayout
+        android:id="@+id/loginQuestionContainer"
+        android:layout_width="wrap_content"
+        android:layout_height="35dp"
+        android:layout_below="@id/btn_signup"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="25dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/textview_existedIdQuestion"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:gravity="center"
+            android:text="@string/existedIdQuestion"
+            android:textColor="#A0A0A0"
+            android:textSize="15sp" />
+
+        <Button
+            android:id="@+id/btn_existLogin"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:background="@null"
+            android:onClick="loginAccount"
+            android:paddingLeft="8dp"
+            android:text="@string/action_existedID"
+            android:textColor="#3467BD"
+            android:textSize="15sp" />
+    </LinearLayout>
+
+
+</RelativeLayout>
+
+
+

@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@drawable/login_background_color"
+    android:orientation="vertical">
+
+
+
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/dp5">
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:orientation="vertical"
+            android:padding="@dimen/dp20">
+
+            <ImageView
+                android:layout_width="@dimen/dp180"
+                android:layout_height="@dimen/dp80"
+                android:layout_marginTop="@dimen/dp70"
+                android:layout_marginBottom="@dimen/dp20"
+                android:layout_gravity="center"
+                android:background="@drawable/baajna"/>
+
+                <EditText
+                    android:id="@+id/edittext_loginEmail"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="@dimen/dp10"
+                    android:background="@drawable/rounded"
+                    android:drawableLeft="@drawable/u"
+                    android:drawablePadding="@dimen/dp20"
+                    android:inputType="textEmailAddress"
+                    android:padding="@dimen/dp5"
+                    android:hint="Email"
+                    android:singleLine="true"
+                    android:textColor="#000000"
+                    android:textColorHint="#CCC" />
+
+
+                <EditText
+                    android:id="@+id/edittext_loginPassword"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/rounded"
+                    android:drawableLeft="@drawable/pass"
+                    android:drawablePadding="@dimen/dp20"
+                    android:inputType="textPassword"
+                    android:padding="@dimen/dp5"
+                    android:hint="Password"
+                    android:layout_marginBottom="@dimen/dp20"
+                    android:singleLine="true"
+                    android:textColor="#000000"
+                    android:textColorHint="#CCC" />
+
+
+
+
+            <Button
+                android:id="@+id/btn_loginBtn"
+                android:layout_width="fill_parent"
+                android:layout_height="@dimen/dp40"
+                android:layout_margin="@dimen/dp5"
+                android:background="@drawable/rounded_login"
+                android:padding="@dimen/dp5"
+                android:text="@string/log_in"
+                android:textColor="#242424"
+                android:textStyle="bold"
+                android:textSize="@dimen/sp13"
+
+                />
+
+            <Button
+                android:id="@+id/btn_forgot_password"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp20"
+                android:background="@android:color/transparent"
+                android:text="@string/forget_pass"
+                android:textColor="#000000"
+                android:visibility="gone"/>
+
+            <!-- Link to Login Screen -->
+
+            <Button
+                android:id="@+id/btn_signupRequest"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dip"
+                android:background="@android:color/transparent"
+                android:text="@string/not_member"
+                android:textAllCaps="false"
+                android:textColor="#ffffff"
+                android:textSize="@dimen/sp14" />
+
+            <TextView
+                android:id="@+id/loginErrorMsg"
+                android:layout_width="fill_parent"
+                android:layout_height="56dp"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/passres"
+                android:textColor="#000000" />
+
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

@@ -1,0 +1,27 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/transparent">
+
+    <TextView
+        android:id="@+id/musicPlayerTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="18dp"
+        android:textColor="#ffffffff"
+        android:maxLines="1"
+        android:ellipsize="marquee"
+        android:text="" />
+
+    <TextView
+        android:id="@+id/musicPlayerSubtitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/musicPlayerTitle"
+        android:textSize="12dp"
+        android:textColor="#ffffffff"
+        android:maxLines="1"
+        android:ellipsize="marquee"
+        android:text="" />
+
+</RelativeLayout>

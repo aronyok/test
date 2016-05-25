@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container_albumListForArtist"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#ffffffff"
+    tools:context="com.scroll.owner.sparkle.Playlist">
+
+    <include layout="@layout/ad_bar" />
+
+    <GridView
+        android:id="@+id/albumsListForArtistGrid"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:columnWidth="110dp"
+        android:numColumns="auto_fit"
+        android:verticalSpacing="10dp"
+        android:horizontalSpacing="10dp"
+        android:stretchMode="columnWidth"
+        android:gravity="center"
+        android:paddingTop="5dp"
+        android:layout_marginTop="72dp"
+        android:paddingBottom="60dp" />
+
+    <ProgressBar
+        android:id="@+id/loading_albumList"
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:layout_gravity="center"
+        android:visibility="gone" />
+
+    <RelativeLayout
+        android:id="@+id/container_songbar_albumList"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_alignParentBottom="true"
+        android:background="#000000">
+
+        <ImageView
+            android:id="@+id/songbar_albumArt_albumList"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="5dp"
+            android:src="@drawable/sparkle_icon_white" />
+
+        <TextView
+            android:id="@+id/songbar_title_albumList"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingRight="60dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="70dp"
+            android:text="@string/songbar_songtitle"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/songbar_artist_albumList"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:layout_marginLeft="70dp"
+            android:textColor="#d3d3d3"
+            android:textSize="12sp" />
+
+        <Button
+            android:id="@+id/button_playpause_albumList"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginRight="10dp"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/button_songbar_play"
+            android:onClick="playMusic" />
+    </RelativeLayout>
+
+</RelativeLayout>

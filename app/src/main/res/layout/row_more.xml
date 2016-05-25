@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/lay_more"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/dp40"
+    android:background="#fafafa"
+    android:orientation="horizontal">
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="@dimen/dp40"
+        android:layout_weight="0.9">
+
+        <TextView
+            android:id="@+id/tv_more"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="@dimen/dp10"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:text="All Artists" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="@dimen/dp40"
+        android:layout_weight="0.1"
+        android:gravity="center">
+
+        <ImageView
+            android:id="@+id/img_more"
+            android:layout_width="@dimen/dp20"
+            android:layout_height="@dimen/dp20"
+
+            android:src="@drawable/more_icon" />
+
+    </LinearLayout>
+
+</LinearLayout>

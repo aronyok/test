@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+
+    <ImageView
+        android:id="@+id/img_new_release_album_cover"
+        android:layout_width="@dimen/dp150"
+        android:layout_height="@dimen/dp150"
+        android:layout_gravity="center"
+        android:layout_marginTop="@dimen/dp20"
+        android:background="@drawable/rod_boleche"
+         />
+
+    <TextView
+        android:id="@+id/tv_new_release_album_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Rod Boleche Hobe"
+        android:textStyle="bold" />
+
+
+    <TextView
+        android:id="@+id/tv_new_release_album_artist"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Arnob"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tv_new_release_album_num_songs"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/dp10"
+        android:gravity="center"
+        android:text="10 songs"
+        android:textStyle="bold" />
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btn_album_add_queue"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/dp3"
+            android:layout_marginRight="@dimen/dp2"
+            android:layout_weight="1"
+            android:background="@drawable/custom_button"
+            android:padding="@dimen/dp3"
+            android:text="QUEUE" />
+
+        <Button
+            android:id="@+id/btn_album_play"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/dp3"
+            android:layout_marginRight="@dimen/dp2"
+            android:layout_weight="1"
+            android:background="@drawable/custom_button"
+            android:padding="@dimen/dp3"
+            android:text="PLAY" />
+
+        <Button
+            android:id="@+id/btn_album_download"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/dp3"
+            android:layout_marginRight="@dimen/dp3"
+            android:layout_weight="1"
+            android:background="@drawable/custom_button"
+            android:padding="@dimen/dp3"
+            android:text="DOWNLOAD" />
+
+    </LinearLayout>
+
+
+   <LinearLayout
+       android:id="@+id/lay_song_list_view"
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:orientation="vertical">
+
+
+
+
+   </LinearLayout>
+
+
+</LinearLayout>

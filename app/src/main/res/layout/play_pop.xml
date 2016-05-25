@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/play_pop_LinearLayout"
+    android:background="@drawable/textview_corner">
+
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Play"
+        android:id="@+id/menu_play"
+        android:background="#FFFFFF"
+        android:gravity="left|center"
+        android:padding="10dp"
+        android:textColor="#386AB9"
+        android:textAllCaps="false" />
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Play All"
+        android:id="@+id/menu_play_all"
+        android:background="#FFFFFF"
+        android:gravity="left|center"
+        android:padding="10dp"
+        android:textColor="#386AB9"
+        android:textAllCaps="false" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Download"
+        android:id="@+id/menu_download"
+        android:background="#FFFFFF"
+        android:gravity="left|center"
+        android:padding="10dp"
+        android:textColor="#386AB9"
+        android:textAllCaps="false" />
+
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Share"
+        android:id="@+id/menu_share"
+        android:background="#FFFFFF"
+        android:padding="10dp"
+        android:gravity="left|center"
+        android:textColor="#386AB9"
+        android:textAllCaps="false" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Add to Playlist"
+        android:id="@+id/menu_addPlayList"
+        android:background="#FFFFFF"
+        android:gravity="left|center"
+        android:padding="10dp"
+        android:textColor="#386AB9"
+        android:textAllCaps="false" />
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Add to Queue"
+        android:id="@+id/menu_addQueue"
+        android:background="#FFFFFF"
+        android:gravity="left|center"
+        android:padding="10dp"
+        android:textColor="#386AB9"
+        android:textAllCaps="false" />
+
+</LinearLayout>
