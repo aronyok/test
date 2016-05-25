@@ -45,8 +45,10 @@ public class Globals {
 
 
 
-
     public static int releaseDateLimit = 7*365;
+
+    public static boolean isStoragePerGranted;
+
 
 
 }

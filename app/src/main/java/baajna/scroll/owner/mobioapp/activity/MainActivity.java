@@ -1,5 +1,6 @@
 package baajna.scroll.owner.mobioapp.activity;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -27,7 +28,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -50,7 +50,6 @@ import baajna.scroll.owner.mobioapp.utils.Utils;
 import baajna.scroll.owner.mobioapp.fragment.FragAlbum;
 import baajna.scroll.owner.mobioapp.interfaces.IMusic;
 
-import com.mobioapp.baajna.Manifest;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import org.json.JSONArray;
@@ -63,7 +62,8 @@ import cz.msebera.android.httpclient.Header;
 import com.mobioapp.baajna.R;
 import com.squareup.picasso.Picasso;
 
-public class MainActivity extends AppCompatActivity implements IMusic,ActivityCompat.OnRequestPermissionsResultCallback {
+
+public class MainActivity extends AppCompatActivity implements IMusic {
 
 
     private ImageView imageView_SongBar, imgEdit,btnCancel, btnSave;
@@ -75,12 +75,9 @@ public class MainActivity extends AppCompatActivity implements IMusic,ActivityCo
     private DrawerLayout drawerLayout;
     private Toolbar toolbar;
     private FragmentManager fm;
-    private MoSong moSong;
+
 
     private ArrayList<String> titles;
-
-
-    private Handler handler;
 
 
     public ActionBar actionBar;
@@ -92,8 +89,10 @@ public class MainActivity extends AppCompatActivity implements IMusic,ActivityCo
     private String title, album,imageSong;
     private OnUpdateUI onUpdateUI;
 
+    private MoSong runningSong;
+    private int runningSongID;
+
     private Context context;
-    public static final String TAG = "MainActivity";
 
 
     @Override
@@ -102,8 +101,8 @@ public class MainActivity extends AppCompatActivity implements IMusic,ActivityCo
         setContentView(R.layout.activity_main);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         init();
-
         isStoragePermissionGranted();
+
         //callOnline();
     }
 
@@ -135,11 +134,39 @@ public class MainActivity extends AppCompatActivity implements IMusic,ActivityCo
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (handler != null)
-            handler.removeCallbacksAndMessages(null);
+
+        Intent startIntent = new Intent(this, MusicService.class);
+        startIntent.setAction(MusicService.STARTFOREGROUND_ACTION);
+        startService(startIntent);
 
     }
+    public  boolean isStoragePermissionGranted() {
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    == PackageManager.PERMISSION_GRANTED) {
 
+                return true;
+            } else {
+
+
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+                return false;
+            }
+        }
+        else { //permission is automatically granted on sdk<23 upon installation
+            return true;
+        }
+
+
+    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if(grantResults[0]== PackageManager.PERMISSION_GRANTED){
+            Globals.isStoragePerGranted=true;
+            //resume tasks needing this permission
+        }
+    }
 
     private void init() {
         activity = this;
@@ -154,6 +181,8 @@ public class MainActivity extends AppCompatActivity implements IMusic,ActivityCo
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         actionBar = getSupportActionBar();
 
+
+        MusicService.setUpdateInterface(this);
         alertDialog = new AlertDialog.Builder(activity).create();
 
 
@@ -168,9 +197,6 @@ public class MainActivity extends AppCompatActivity implements IMusic,ActivityCo
         btnCancel = (ImageView) findViewById(R.id.btn_cancel);
         mLayout = (SlidingUpPanelLayout) findViewById(R.id.sliding_layout);
         navigationView = (NavigationView) findViewById(R.id.navigationView);
-        handler = new Handler();
-
-
 
         if (titles == null)
             titles = new ArrayList<>();
@@ -273,39 +299,6 @@ public class MainActivity extends AppCompatActivity implements IMusic,ActivityCo
         replaceFrag(FragHomePage.getInstance(), "Home");
     }
 
-    public  boolean isStoragePermissionGranted() {
-        if (Build.VERSION.SDK_INT >= 23) {
-            if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                    == PackageManager.PERMISSION_GRANTED) {
-                Log.v(TAG,"Permission is granted");
-
-                return true;
-            } else {
-
-                Log.v(TAG,"Permission is revoked");
-
-                ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
-
-                return false;
-            }
-        }
-        else { //permission is automatically granted on sdk<23 upon installation
-            Log.v(TAG,"Permission is granted");
-            return true;
-        }
-
-
-
-    }
-
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if(grantResults[0]== PackageManager.PERMISSION_GRANTED){
-            Log.v(TAG,"Permission: "+permissions[0]+ "was "+grantResults[0]);
-            //resume tasks needing this permission
-        }
-    }
-
 
     public void prepareBottomPlayer() {
 
@@ -313,7 +306,7 @@ public class MainActivity extends AppCompatActivity implements IMusic,ActivityCo
         if (MusicService.playerState == MusicService.STATE_PLAYING) {
             title = MusicService.getRunningSongTitle();
             album = MusicService.getRunningSongAlbum();
-            imageSong=MusicService.getRunningSongImage();
+
             Log.d("Sajal","Song : "+imageSong);
             songbarPlayButton.setBackgroundResource(R.drawable.pause_icon);
             songbarPlayButton.setEnabled(true);
@@ -328,13 +321,18 @@ public class MainActivity extends AppCompatActivity implements IMusic,ActivityCo
         }
         tvSongTitle.setText(title);
         tvSongAlbum.setText(album);
-        //imageView_SongBar.setBackgroundResource();
 
+        if(runningSong!=null && runningSongID!=runningSong.getId()) {
+            runningSongID=runningSong.getId();
+            final String imgUrl= runningSong.getImgUrl().isEmpty()? Urls.BASE_URL+Urls.IMG_SONG +"6e83e5d5fee89ad93c147322a1314076.jpg":Urls.BASE_URL+Urls.IMG_SONG +runningSong.getImgUrl();
+            Log.e("PIC", imgUrl);
 
-        //imageView_SongBar.setImageURI(Uri.parse(imageSong));
-        //imageView_SongBar.setImageURI(Uri.parse(DbManager.SQL_SONGS_PLAYLIST_RUNNING));
+                    Picasso.with(context)
+                            .load(imgUrl)
+                            .placeholder(R.drawable.sync_icon)
+                            .into(imageView_SongBar);
 
-        // Log.d("Jewel", "call from M :" + MusicService.playerState);
+        }
     }
 
     private void updateUI() {
@@ -385,7 +383,8 @@ public class MainActivity extends AppCompatActivity implements IMusic,ActivityCo
 
 
     @Override
-    public void onUpdate(MediaPlayer mediaPlayer) {
+    public void onUpdate(MediaPlayer mediaPlayer,MoSong runningSong) {
+        this.runningSong=runningSong;
         prepareBottomPlayer();
     }
 
@@ -393,6 +392,7 @@ public class MainActivity extends AppCompatActivity implements IMusic,ActivityCo
         Intent startIntent = new Intent(this, MusicService.class);
         startIntent.setAction(MusicService.NORMAL_ACTION);
         startService(startIntent);
+        MusicService.setUpdateInterface(this);
     }
 
     private void syncSongInfo(){
