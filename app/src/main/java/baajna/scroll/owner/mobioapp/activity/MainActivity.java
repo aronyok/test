@@ -5,11 +5,14 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
@@ -24,6 +27,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -46,6 +50,7 @@ import baajna.scroll.owner.mobioapp.utils.Utils;
 import baajna.scroll.owner.mobioapp.fragment.FragAlbum;
 import baajna.scroll.owner.mobioapp.interfaces.IMusic;
 
+import com.mobioapp.baajna.Manifest;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import org.json.JSONArray;
@@ -58,7 +63,7 @@ import cz.msebera.android.httpclient.Header;
 import com.mobioapp.baajna.R;
 import com.squareup.picasso.Picasso;
 
-public class MainActivity extends AppCompatActivity implements IMusic {
+public class MainActivity extends AppCompatActivity implements IMusic,ActivityCompat.OnRequestPermissionsResultCallback {
 
 
     private ImageView imageView_SongBar, imgEdit,btnCancel, btnSave;
@@ -88,6 +93,7 @@ public class MainActivity extends AppCompatActivity implements IMusic {
     private OnUpdateUI onUpdateUI;
 
     private Context context;
+    public static final String TAG = "MainActivity";
 
 
     @Override
@@ -97,7 +103,7 @@ public class MainActivity extends AppCompatActivity implements IMusic {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         init();
 
-
+        isStoragePermissionGranted();
         //callOnline();
     }
 
@@ -265,6 +271,39 @@ public class MainActivity extends AppCompatActivity implements IMusic {
         });
 
         replaceFrag(FragHomePage.getInstance(), "Home");
+    }
+
+    public  boolean isStoragePermissionGranted() {
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    == PackageManager.PERMISSION_GRANTED) {
+                Log.v(TAG,"Permission is granted");
+
+                return true;
+            } else {
+
+                Log.v(TAG,"Permission is revoked");
+
+                ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+
+                return false;
+            }
+        }
+        else { //permission is automatically granted on sdk<23 upon installation
+            Log.v(TAG,"Permission is granted");
+            return true;
+        }
+
+
+
+    }
+
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if(grantResults[0]== PackageManager.PERMISSION_GRANTED){
+            Log.v(TAG,"Permission: "+permissions[0]+ "was "+grantResults[0]);
+            //resume tasks needing this permission
+        }
     }
 
 

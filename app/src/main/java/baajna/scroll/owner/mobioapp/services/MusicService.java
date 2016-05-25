@@ -14,12 +14,14 @@ import android.net.Uri;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.support.v7.app.NotificationCompat;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
 import com.mobioapp.baajna.R;
+import com.squareup.picasso.Picasso;
 
 import baajna.scroll.owner.mobioapp.datamodel.MoSong;
 import baajna.scroll.owner.mobioapp.datamodel.MoSongCount;
@@ -28,6 +30,7 @@ import baajna.scroll.owner.mobioapp.utils.Decryption;
 import baajna.scroll.owner.mobioapp.utils.Globals;
 import baajna.scroll.owner.mobioapp.utils.MyApp;
 import baajna.scroll.owner.mobioapp.utils.SparkleApp;
+import baajna.scroll.owner.mobioapp.utils.Urls;
 import baajna.scroll.owner.mobioapp.utils.Utils;
 import baajna.scroll.owner.mobioapp.activity.MainActivity;
 import baajna.scroll.owner.mobioapp.interfaces.IMusic;
@@ -389,11 +392,11 @@ public class MusicService extends Service implements
     }
 
     public static String getRunningSongAlbum() {
-        return (songs != null && isRunning) ? songs.get(songPosn).getArtist_name():" ";
+        return (songs.get(songPosn).getArtist_name());
     }
 
     public static  String getRunningSongImage(){
-        Log.d("Sajal","Song : "+songs.get(songPosn).getImgUrl());
+        Log.d("Sajal", "Song : " + songs.get(songPosn).getImgUrl());
         return songs.get(songPosn).getImgUrl();
 
     }
@@ -410,6 +413,8 @@ public class MusicService extends Service implements
 
     @Override
     public void onCompletion(MediaPlayer mp) {
+
+
         //check if playback has reached the end of a track
         if (player.getCurrentPosition() > 0) {
             mp.reset();
