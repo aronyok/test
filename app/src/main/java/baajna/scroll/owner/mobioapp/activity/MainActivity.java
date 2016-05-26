@@ -136,7 +136,10 @@ public class MainActivity extends AppCompatActivity implements IMusic {
     protected void onDestroy() {
         super.onDestroy();
 
-
+        Intent startIntent = new Intent(this, MusicService.class);
+        startIntent.setAction(MusicService.STARTFOREGROUND_ACTION);
+        startService(startIntent);
+        MusicService.setUpdateInterface(this);
 
     }
     public  boolean isStoragePermissionGranted() {
