@@ -58,7 +58,8 @@
             android:layout_centerVertical="true"
             android:background="@drawable/rounded_pop_up"
             android:gravity="center"
-            android:hint="Playlist Name"/>
+            android:hint="Playlist Name"
+            android:textColor="#616161"/>
 
         <LinearLayout
             android:id="@+id/buttons"

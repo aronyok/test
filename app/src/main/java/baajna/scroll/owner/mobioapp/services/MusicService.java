@@ -385,7 +385,7 @@ public class MusicService extends Service implements
     }
 
     public static String getRunningSongAlbum() {
-        return (songs != null && isRunning) ? songs.get(songPosn).getArtist_name():" ";
+        return (songs.get(songPosn).getArtist_name());
     }
 
 

@@ -148,7 +148,7 @@ public class LoginActivity extends Activity implements View.OnClickListener {
 
         if (logindata == 1 ) {
             //startActivity(new Intent(LoginActivity.this, MainActivity.class));
-            Toast.makeText(getApplicationContext(), "You are successfully logged in. Welcome to Sync", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "You are successfully logged in. Welcome to Baajna", Toast.LENGTH_SHORT).show();
             startActivity(new Intent(LoginActivity.this, SplashActivity.class));
             //SparkleApp.getInstance().setMoUser(info);
         } else {

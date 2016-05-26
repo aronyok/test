@@ -11,6 +11,7 @@
         android:id="@+id/img_new_albums"
         android:layout_width="@dimen/dp120"
         android:layout_height="@dimen/dp120"
+        android:paddingRight="@dimen/dp5"
         android:scaleType="fitXY"
         android:src="@drawable/main_myplaylist" />
 

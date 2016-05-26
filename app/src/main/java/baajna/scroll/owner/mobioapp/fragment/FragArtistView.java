@@ -139,7 +139,7 @@ public class FragArtistView extends Fragment {
                         //prepareDisplay();
                         getDBData();
                         if (artistTop.size() > 0) {
-
+                            layTop.addView(prepareMoreViewArtists());
                             layTop.addView(prepareTextView("TOP ARTISTS"));
                             //layTop.addView(prepareViewArtist(artistTop));
                             int lenArtist = artistTop.size();
@@ -205,7 +205,7 @@ public class FragArtistView extends Fragment {
                             }
                             //layTrend.addView(prepareViewArtist(moArtist2));
                             //layTrend.addView(prepareViewArtist(moArtist3));
-                            layTrend.addView(prepareMoreViewArtists());
+                            //layTrend.addView(prepareMoreViewArtists());
 
                         }
                     }
@@ -222,7 +222,7 @@ public class FragArtistView extends Fragment {
         getDBData();
 
         if (artistTop.size() > 0) {
-
+            layTop.addView(prepareMoreViewArtists());
             layTop.addView(prepareTextView("TOP ARTISTS"));
             //layTop.addView(prepareViewArtist(artistTop));
             int lenArtist = artistTop.size();
@@ -272,7 +272,7 @@ public class FragArtistView extends Fragment {
             }
             //layTrend.addView(prepareViewArtist(moArtist2));
             //layTrend.addView(prepareViewArtist(moArtist3));
-            layTrend.addView(prepareMoreViewArtists());
+            //layTrend.addView(prepareMoreViewArtists());
 
         }
 
@@ -319,7 +319,7 @@ public class FragArtistView extends Fragment {
         TextView textViewMore = (TextView) laymore.findViewById(R.id.tv_more);
         ImageView imageViewMore = (ImageView) laymore.findViewById(R.id.img_more);
 
-        textViewMore.setText("All Artists");
+        textViewMore.setText("See All Artists");
         textViewMore.setTextSize(13);
         textViewMore.setTypeface(Typeface.DEFAULT_BOLD);
         textViewMore.setTextColor(Color.parseColor("#303030"));

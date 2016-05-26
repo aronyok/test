@@ -18,6 +18,8 @@ import android.support.v7.widget.Toolbar;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
@@ -34,7 +36,6 @@ import baajna.scroll.owner.mobioapp.datamodel.MoAlbum;
 import baajna.scroll.owner.mobioapp.datamodel.MoPlayList;
 import baajna.scroll.owner.mobioapp.parser.CommunicationLayer;
 import baajna.scroll.owner.mobioapp.utils.AlphaForeGroundColorSpan;
-import baajna.scroll.owner.mobioapp.utils.CommonFunc;
 import baajna.scroll.owner.mobioapp.utils.Globals;
 import baajna.scroll.owner.mobioapp.utils.MyApp;
 import baajna.scroll.owner.mobioapp.utils.ScrollViewHelper;
@@ -203,12 +204,6 @@ public class SingleSongActivity extends AppCompatActivity {
     }
 
     public  boolean isStoragePermissionGranted() {
-        String granted= CommonFunc.getPref(context, "isGranted");
-        if(granted!=null && granted.equals("true")){
-            Globals.isStoragePerGranted=true;
-            return true;
-        }
-
         if (Build.VERSION.SDK_INT >= 23) {
             if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
                     == PackageManager.PERMISSION_GRANTED) {
@@ -300,7 +295,18 @@ public class SingleSongActivity extends AppCompatActivity {
                 long result = mydb.addToPlaylist(playList);
                 MusicService.songs = mydb.getSongs(DbManager.SQL_SONGS_PLAYLIST_RUNNING);
                 mydb.close();
-                Toast.makeText(context, "Added player Queue", Toast.LENGTH_LONG).show();
+                //Toast.makeText(context, "Added player Queue", Toast.LENGTH_LONG).show();
+                Context context= MyApp.getAppContext();
+                LayoutInflater inflater=(LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+                View customToastroot =inflater.inflate(R.layout.custom_toast, null);
+
+                Toast customtoast=new Toast(context);
+
+                customtoast.setView(customToastroot);
+                customtoast.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL, 0, 0);
+                customtoast.setDuration(Toast.LENGTH_LONG);
+                customtoast.show();
 
             }
         });

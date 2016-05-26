@@ -174,7 +174,7 @@ public class SignupActivity extends Activity implements View.OnClickListener {
         singUpdata = jDataObj.getInt("message");
 
         if (singUpdata == 1) {
-            Toast.makeText(getApplicationContext(), "Your are successfully registered. Welcome to Sync", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "Your are successfully registered. Welcome to Baajna", Toast.LENGTH_SHORT).show();
             startActivity(new Intent(SignupActivity.this, LoginActivity.class));
 
         } else {

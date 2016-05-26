@@ -336,7 +336,7 @@ public class MainActivity extends AppCompatActivity implements IMusic {
 
         if(runningSong!=null && runningSongID!=runningSong.getId()) {
             runningSongID=runningSong.getId();
-            final String imgUrl= runningSong.getImgUrl().isEmpty()? Urls.BASE_URL+Urls.IMG_SONG +"6e83e5d5fee89ad93c147322a1314076.jpg":Urls.BASE_URL+Urls.IMG_SONG +runningSong.getImgUrl();
+            final String imgUrl= runningSong.getImgUrl().isEmpty()? Urls.BASE_URL+Urls.IMG_SONG +"6e83e5d5fee89ad93c147322a1314076.jpg":/*Urls.BASE_URL+Urls.IMG_SONG +*/runningSong.getImgUrl();
             Log.e("PIC", imgUrl);
 
                     Picasso.with(context)
