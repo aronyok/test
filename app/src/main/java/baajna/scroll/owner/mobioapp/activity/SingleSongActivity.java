@@ -354,6 +354,17 @@ public class SingleSongActivity extends AppCompatActivity {
                         db.close();
                         Log.d("Jewel", "a " + playLists.size() + ": " + song_id);
                         dialog.dismiss();
+                        Context context= MyApp.getAppContext();
+                        LayoutInflater inflater=(LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+                        View customToastroot =inflater.inflate(R.layout.custom_toast_playlist, null);
+
+                        Toast customtoast=new Toast(context);
+
+                        customtoast.setView(customToastroot);
+                        customtoast.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL, 0, 0);
+                        customtoast.setDuration(Toast.LENGTH_LONG);
+                        customtoast.show();
                     }
                 };
                 adapter.setData(playList1);

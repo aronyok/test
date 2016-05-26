@@ -25,9 +25,9 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:padding="@dimen/dp3"
-            android:text="Playlist Created"
+            android:text="Song has added to playlist"
             android:textColor="#ffffff"
-            android:textSize="@dimen/dp15" />
+            android:textSize="@dimen/sp14" />
 
 
     </LinearLayout>

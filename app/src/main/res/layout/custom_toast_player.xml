@@ -13,11 +13,7 @@
         android:layout_height="wrap_content"
         android:background="@drawable/toast_border">
 
-        <ImageView
-            android:id="@+id/image_download"
-            android:layout_width="@dimen/dp20"
-            android:layout_height="@dimen/dp20"
-            android:background="@drawable/add_to_playlist"/>
+
 
         <TextView
             android:id="@+id/text1"
@@ -25,7 +21,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:padding="@dimen/dp3"
-            android:text="Song has added to queue"
+            android:text="Added to music player"
 
             android:textColor="#ffffff"
             android:textSize="@dimen/sp12" />
