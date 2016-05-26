@@ -469,6 +469,7 @@ Log.e("MUSIC", "on prepare");
         }else {
             Log.e("NOT","not paused");
         }
+        if(runningSong!=null)
         notificationView.setTextViewText(R.id.songname_text,  runningSong.getTitle() + (player!=null&&player.isPlaying()? " is paused":" is playing"));
         notificationView.setViewVisibility(R.id.not_stop, (player!=null&&player.isPlaying())?View.VISIBLE:View.GONE);
         notificationView.setImageViewResource(R.id.not_play,(player!=null&&player.isPlaying())? R.drawable.play_icon:R.drawable.pause_icon);

@@ -240,18 +240,16 @@ public class FragMusicPlayer extends Fragment implements View.OnClickListener, O
                     startIntent = new Intent(getActivity(), MusicService.class);
                     startIntent.setAction(MusicService.PLAY_ACTION);
                     getActivity().startService(startIntent);
+                //MusicService.setUpdateInterface(this);
 
-/*
 
-
-                if (MusicService.playerState != MusicService.STATE_NOT_READY) {
+               /* if (MusicService.playerState != MusicService.STATE_NOT_READY) {
 
                     MusicService.playPause();
 
                 } else {
                     startMusicService();
-                }
-*/
+                }*/
 
 
                 break;
