@@ -20,8 +20,8 @@
             android:padding="@dimen/dp20">
 
             <ImageView
-                android:layout_width="@dimen/dp180"
-                android:layout_height="@dimen/dp80"
+                android:layout_width="@dimen/dp150"
+                android:layout_height="@dimen/dp70"
                 android:layout_marginTop="@dimen/dp70"
                 android:layout_marginBottom="@dimen/dp20"
                 android:layout_gravity="center"

@@ -34,6 +34,7 @@ import baajna.scroll.owner.mobioapp.datamodel.MoAlbum;
 import baajna.scroll.owner.mobioapp.datamodel.MoPlayList;
 import baajna.scroll.owner.mobioapp.parser.CommunicationLayer;
 import baajna.scroll.owner.mobioapp.utils.AlphaForeGroundColorSpan;
+import baajna.scroll.owner.mobioapp.utils.CommonFunc;
 import baajna.scroll.owner.mobioapp.utils.Globals;
 import baajna.scroll.owner.mobioapp.utils.MyApp;
 import baajna.scroll.owner.mobioapp.utils.ScrollViewHelper;
@@ -202,6 +203,12 @@ public class SingleSongActivity extends AppCompatActivity {
     }
 
     public  boolean isStoragePermissionGranted() {
+        String granted= CommonFunc.getPref(context, "isGranted");
+        if(granted!=null && granted.equals("true")){
+            Globals.isStoragePerGranted=true;
+            return true;
+        }
+
         if (Build.VERSION.SDK_INT >= 23) {
             if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
                     == PackageManager.PERMISSION_GRANTED) {
