@@ -23,6 +23,7 @@ import com.mobioapp.baajna.R;
 
 import baajna.scroll.owner.mobioapp.datamodel.MoSong;
 import baajna.scroll.owner.mobioapp.datamodel.MoSongCount;
+import baajna.scroll.owner.mobioapp.fragment.FragMusicPlayer;
 import baajna.scroll.owner.mobioapp.utils.CommonFunc;
 import baajna.scroll.owner.mobioapp.utils.Decryption;
 import baajna.scroll.owner.mobioapp.utils.Globals;
@@ -135,24 +136,27 @@ public class MusicService extends Service implements
                 playPrev();
 
             } else if (intent.getAction().equals(PLAY_ACTION)) {
-                prepareNotification();
                 Log.e("Jewel", "S-PLAY-pause");
+                prepareNotification();
                 if (player.isPlaying()) {
 
                     playPause();
+                    /*notificationView.setTextViewText(R.id.songname_text, runningSong.getTitle() + (player != null && player.isPlaying() ? " is playing" : " is paused"));
                     notificationView.setImageViewResource(R.id.not_play, R.drawable.play_icon);
                     notificationView.setViewVisibility(R.id.not_stop, View.VISIBLE);
                     not.contentView = notificationView;
-                    mNotificationManager.notify(NOTIFY_ID, not);
+                    mNotificationManager.notify(NOTIFY_ID, not);*/
                 } else {
                     player.start();
-                    //callOnline();
-                    notificationView.setViewVisibility(R.id.not_stop, View.GONE);
                     playerState = STATE_PLAYING;
+                  /*  //callOnline();
+                    notificationView.setTextViewText(R.id.songname_text,  runningSong.getTitle() + (player!=null&&player.isPlaying()? " is playing":" is paused"));
+                    notificationView.setViewVisibility(R.id.not_stop, View.GONE);
+
                     notificationView.setImageViewResource(R.id.not_play, R.drawable.pause_icon);
                     not.contentView = notificationView;
                     mNotificationManager.notify(NOTIFY_ID, not);
-
+*/
 
                 }
                 if (iMusic != null) {
@@ -172,6 +176,8 @@ public class MusicService extends Service implements
                 Log.e("Jewel", "S-STOP");
                 isRunning = false;
                 stopSelf();
+                mNotificationManager.cancel(NOTIFY_ID);
+                System.exit(0);
             }else if(intent.getAction().equals(NORMAL_ACTION)){
                 Log.e("Jewel", "S-normal");
 
@@ -298,6 +304,7 @@ public class MusicService extends Service implements
     public static void playPrev() {
         if (player == null)
             return;
+
         isRunning = false;
         songPosn--;
         if (songPosn < 0) songPosn = songs.size() - 1;
@@ -312,6 +319,7 @@ public class MusicService extends Service implements
     public static void playNext() {
         if (player == null)
             return;
+
         isRunning = false;
         if (shuffle) {
             int newSong = songPosn;
@@ -334,7 +342,7 @@ public class MusicService extends Service implements
 
 
     public static void playPause() {
-        Log.e("Jewel", "S-play-pause");
+
         if (playerState == STATE_NOT_READY || playerState == STATE_STOP || playerState == 0)
             playSong(songPosn);
             //Log.d("Jewel","Call first: "+playerState);
@@ -344,31 +352,32 @@ public class MusicService extends Service implements
             player.pause();
             playerState = STATE_PAUSE;
 
-            //prepare notification
+            /*//prepare notification
+            notificationView.setTextViewText(R.id.songname_text,  runningSong.getTitle() + (player!=null&&player.isPlaying()? " is playing":" is paused"));
             notificationView.setImageViewResource(R.id.not_play, R.drawable.play_icon);
             notificationView.setViewVisibility(R.id.not_stop, View.VISIBLE);
             not.contentView = notificationView;
-            mNotificationManager.notify(NOTIFY_ID, not);
+            mNotificationManager.notify(NOTIFY_ID, not);*/
         }
         else if (player != null && !player.isPlaying()) {
             if (notificationView == null)
-                prepareNotification();
+
 
             //
             playerState = STATE_PLAYING;
             player.start();
-            //playSong(songPosn);
+            /*//playSong(songPosn);
             //isRunning = true;
 
             //prepare notification
+            notificationView.setTextViewText(R.id.songname_text,  runningSong.getTitle() + (player!=null&&player.isPlaying()? " is playing":" is paused"));
             notificationView.setViewVisibility(R.id.not_stop, View.GONE);
             notificationView.setImageViewResource(R.id.not_play, R.drawable.pause_icon);
             not.contentView = notificationView;
-            mNotificationManager.notify(NOTIFY_ID, not);
+            mNotificationManager.notify(NOTIFY_ID, not);*/
         }
 
         if (iMusic != null) {
-            Log.e("SERVICE","play");
             iMusic.onUpdate(player,runningSong);
         }
     }
@@ -417,9 +426,10 @@ public class MusicService extends Service implements
 
     @Override
     public void onPrepared(MediaPlayer mp) {
-Log.e("MUSIC","on prepare");
+Log.e("MUSIC", "on prepare");
         playerState = STATE_PLAYING;
         isRunning = true;
+
         mp.start();
         prepareNotification();
 
@@ -472,11 +482,17 @@ Log.e("MUSIC","on prepare");
     }
 
     private static void prepareNotification() {
-
+        Log.e("NOT","call pre");
         builder = new NotificationCompat.Builder(MyApp.getAppContext());
         notificationView = new RemoteViews(MyApp.getAppContext().getPackageName(), R.layout.notification_view);
-        notificationView.setTextViewText(R.id.songname_Text, "" + songTitle + " " + "is playing");
-
+        if(player!=null&&player.isPlaying()){
+            Log.e("NOT","not playing");
+        }else {
+            Log.e("NOT","not paused");
+        }
+        notificationView.setTextViewText(R.id.songname_text,  runningSong.getTitle() + (player!=null&&player.isPlaying()? " is paused":" is playing"));
+        notificationView.setViewVisibility(R.id.not_stop, (player!=null&&player.isPlaying())?View.VISIBLE:View.GONE);
+        notificationView.setImageViewResource(R.id.not_play,(player!=null&&player.isPlaying())? R.drawable.play_icon:R.drawable.pause_icon);
 
         Intent intent = new Intent(MyApp.getAppContext(), MainActivity.class);
         intent.setAction(STARTFOREGROUND_ACTION);

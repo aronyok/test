@@ -3,7 +3,6 @@ package baajna.scroll.owner.mobioapp.fragment;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -18,44 +17,46 @@ import android.widget.TextView;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
-
 import com.mobioapp.baajna.R;
 
+import java.util.ArrayList;
+
+import baajna.scroll.owner.mobioapp.activity.MainActivity;
 import baajna.scroll.owner.mobioapp.adapter.AdMusicPlayer;
+import baajna.scroll.owner.mobioapp.datamodel.MoSong;
+import baajna.scroll.owner.mobioapp.interfaces.IMusic;
 import baajna.scroll.owner.mobioapp.interfaces.OnUpdateUI;
+import baajna.scroll.owner.mobioapp.localDatabase.DbManager;
+import baajna.scroll.owner.mobioapp.services.MusicService;
 import baajna.scroll.owner.mobioapp.utils.Globals;
 import baajna.scroll.owner.mobioapp.utils.SimpleDividerItemDecoration;
 import baajna.scroll.owner.mobioapp.utils.TimeConverter;
-import baajna.scroll.owner.mobioapp.activity.MainActivity;
-import baajna.scroll.owner.mobioapp.datamodel.MoSong;
-import baajna.scroll.owner.mobioapp.interfaces.IMusic;
-import baajna.scroll.owner.mobioapp.localDatabase.DbManager;
-import baajna.scroll.owner.mobioapp.services.MusicService;
-
-import java.util.ArrayList;
 
 /**
  * Created by Jewel on 1/24/2016.
  */
 public class FragMusicPlayer extends Fragment implements View.OnClickListener, OnUpdateUI, IMusic {
     private static FragMyPlaylist instance;
-    public LinearLayout layLoop,layPrev,layPlay,layNext,layShuffle;
+    public LinearLayout layLoop, layPrev, layPlay, layNext, layShuffle;
     public ImageView imgPlay, imgNext, imgPrev, imgShuffle, imgLoop;
     public TextView tvTitle, tvCTime, tvTTime;
-    int count;
-
     public SeekBar seekBar;
+    int count;
     private View view;
     private ArrayList<MoSong> songList;
     private RecyclerView recyclerView;
     private AdView mAdView;
     private DbManager myDb;
     private AdMusicPlayer adapter;
-    private Handler handler;
+    //private Handler handler;
     private boolean isShuffle = false;
     private boolean isRepeat = false, isEditable;
     private int currentSong;
     private MoSong runningSong;
+
+    //public static boolean isPaused=true;
+
+    private int runningSongId;
 
     public static FragMyPlaylist getInstance() {
         FragMyPlaylist fragMyPlaylist = new FragMyPlaylist();
@@ -91,11 +92,11 @@ public class FragMusicPlayer extends Fragment implements View.OnClickListener, O
         tvTTime = (TextView) view.findViewById(R.id.tv_player_ttime);
         seekBar = (SeekBar) view.findViewById(R.id.seekBar);
 
-        layLoop= (LinearLayout) view.findViewById(R.id.lay_player_loop);
-        layPrev= (LinearLayout) view.findViewById(R.id.lay_player_prev);
-        layPlay= (LinearLayout) view.findViewById(R.id.lay_player_play);
-        layNext= (LinearLayout) view.findViewById(R.id.lay_player_next);
-        layShuffle= (LinearLayout) view.findViewById(R.id.lay_player_shuffle);
+        layLoop = (LinearLayout) view.findViewById(R.id.lay_player_loop);
+        layPrev = (LinearLayout) view.findViewById(R.id.lay_player_prev);
+        layPlay = (LinearLayout) view.findViewById(R.id.lay_player_play);
+        layNext = (LinearLayout) view.findViewById(R.id.lay_player_next);
+        layShuffle = (LinearLayout) view.findViewById(R.id.lay_player_shuffle);
 
         imgPlay = (ImageView) view.findViewById(R.id.img_player_play);
         imgPrev = (ImageView) view.findViewById(R.id.img_player_prev);
@@ -120,12 +121,13 @@ public class FragMusicPlayer extends Fragment implements View.OnClickListener, O
         layShuffle.setOnClickListener(this);
         layLoop.setOnClickListener(this);
 
+        startMusicService();
         MusicService.setUpdateInterface(this);
 
 
         seekBar.setClickable(false);
 
-        startMusicService();
+
         prepareList();
 
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -133,8 +135,8 @@ public class FragMusicPlayer extends Fragment implements View.OnClickListener, O
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 if (fromUser)
                     MusicService.seek(progress);
-                    seekBar.getProgress();
-                    //Log.d("Sajal","Progress"+seekBar.getProgress());
+                seekBar.getProgress();
+                //Log.d("Sajal","Progress"+seekBar.getProgress());
             }
 
             @Override
@@ -149,52 +151,77 @@ public class FragMusicPlayer extends Fragment implements View.OnClickListener, O
         });
 
         ((MainActivity) getActivity()).setOnUpdateUI(this);
-
+/*
         if (handler == null)
-            handler = new Handler();
-        playerTimeUpdater();
+            handler = new Handler();*/
+        //playerTimeUpdater();
 
     }
 
-    private void playerTimeUpdater() {
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if (MusicService.playerState == MusicService.STATE_PLAYING && MusicService.player != null)
-                    //tvCTime.setText(TimeConverter.getTime(MusicService.player.getCurrentPosition()));
-                    updateMusicPlayer();
-                playerTimeUpdater();
-            }
-        }, 1000);
-    }
-
+    /* private void playerTimeUpdater() {
+         handler.postDelayed(new Runnable() {
+             @Override
+             public void run() {
+                 if (MusicService.playerState == MusicService.STATE_PLAYING && MusicService.player != null)
+                     //tvCTime.setText(TimeConverter.getTime(MusicService.player.getCurrentPosition()));
+                     updateMusicPlayer();
+                 playerTimeUpdater();
+             }
+         }, 1000);
+     }
+ */
     private void updateMusicPlayer() {
-        if (MusicService.playerState == MusicService.STATE_PLAYING && MusicService.player != null) {
-            //if (MusicService.playerState == MusicService.STATE_PLAYING) {
-            tvTitle.setText(MusicService.getRunningSongTitle());
-            tvCTime.setText(TimeConverter.getTime(MusicService.player.getCurrentPosition()));
-            tvTTime.setText(TimeConverter.getTime(MusicService.player.getDuration()));
-            imgPlay.setEnabled(true);
+        Log.e("Jewel", "update call");
 
-            //imgPlay.setBackgroundResource(MusicService.player.isPlaying() ? R.drawable.ico_pause : R.drawable.ico_play);
-            imgPlay.setBackgroundResource(R.drawable.pause_icon);
-            imgShuffle.setImageResource(MusicService.shuffle ? R.drawable.shuffle_icon_inactive : R.drawable.shuffle_icon);
+       /* if(runningSong!=null&&runningSongId!=runningSong.getId()){
+            runningSongId=runningSong.getId();
+            Log.e("Jewel", "set seekbar :" + MusicService.player.getDuration());
+
+
+            //seekBar.setMax(MusicService.player.getDuration());
+            tvTTime.setText(TimeConverter.getTime(MusicService.player.getDuration()));
+        }*/
+
+
+        if (MusicService.playerState == MusicService.STATE_PLAYING && MusicService.player != null) {
+
+            tvTTime.setText(TimeConverter.getTime(MusicService.player.getDuration()));
+            tvCTime.setText(TimeConverter.getTime(MusicService.player.getCurrentPosition()));
+
             seekBar.setMax(MusicService.player.getDuration());
             seekBar.setProgress(MusicService.player.getCurrentPosition());
-            if((seekBar.getProgress() >= ((seekBar.getMax())*70)/100)){
+
+            imgPlay.setEnabled(true);
+            imgPlay.setBackgroundResource(R.drawable.pause_icon);
+           /* if (MusicService.isRunning) {
+                imgPlay.setBackgroundResource(R.drawable.pause_icon);
+
+
+            } else {
+                Log.e("Jewel", "pause");
+                imgPlay.setBackgroundResource(R.drawable.play_icon);
+            }*/
+
+            if ((seekBar.getProgress() >= ((seekBar.getMax()) * 70) / 100)) {
                 count++;
-                Log.d("Sajal","PlayProgress " +count);
+
             }
         } else if (MusicService.playerState == MusicService.STATE_NOT_READY) {
             Log.d("Jewel", " not ready");
             imgPlay.setBackgroundResource(R.drawable.loading);
             imgPlay.setEnabled(false);
+
         } else if (MusicService.playerState == MusicService.STATE_PAUSE) {
-            Log.d("Jewel", " pause");
+            Log.e("Jewel", " pause");
+
             imgPlay.setBackgroundResource(R.drawable.play_icon);
+            imgPlay.setEnabled(true);
+
         } else if (MusicService.playerState == MusicService.STATE_STOP) {
             Log.d("Jewel", " Stop");
             imgPlay.setBackgroundResource(R.drawable.play_icon);
+            imgPlay.setEnabled(true);
+
         }
 
 
@@ -203,29 +230,52 @@ public class FragMusicPlayer extends Fragment implements View.OnClickListener, O
 
     @Override
     public void onClick(View v) {
+        Intent startIntent;
         switch (v.getId()) {
             case R.id.img_player_play:
+
+                if(MusicService.isRunning) {
+                    startIntent = new Intent(getActivity(), MusicService.class);
+                    startIntent.setAction(MusicService.PLAY_ACTION);
+                    getActivity().startService(startIntent);
+                }
+/*
+
+
                 if (MusicService.playerState != MusicService.STATE_NOT_READY) {
+
                     MusicService.playPause();
 
                 } else {
                     startMusicService();
                 }
+*/
 
 
                 break;
             case R.id.img_player_next:
-                if (MusicService.isRunning)
+                startIntent = new Intent(getActivity(), MusicService.class);
+                startIntent.setAction(MusicService.NEXT_ACTION);
+                getActivity().startService(startIntent);
+               /*
+                if (MusicService.isRunning) {
+                    Log.e("Player","next");
                     MusicService.playNext();
+                }
                 else
-                    startMusicService();
+                    startMusicService();*/
 
                 break;
             case R.id.img_player_prev:
-                if (MusicService.isRunning)
+                startIntent = new Intent(getActivity(), MusicService.class);
+                startIntent.setAction(MusicService.PREV_ACTION);
+                getActivity().startService(startIntent);
+               /* if (MusicService.isRunning) {
+                    Log.e("Player","prev");
                     MusicService.playPrev();
+                }
                 else
-                    startMusicService();
+                    startMusicService();*/
 
                 break;
             case R.id.img_player_shuffle:
@@ -269,8 +319,8 @@ public class FragMusicPlayer extends Fragment implements View.OnClickListener, O
     @Override
     public void onResume() {
         super.onResume();
-        if (handler == null)
-            handler = new Handler();
+       /* if (handler == null)
+            handler = new Handler();*/
         prepareList();
 
 
@@ -279,10 +329,10 @@ public class FragMusicPlayer extends Fragment implements View.OnClickListener, O
     @Override
     public void onPause() {
         super.onPause();
-        if (handler != null) {
+       /* if (handler != null) {
             handler.removeCallbacksAndMessages(null);
             handler = null;
-        }
+        }*/
     }
 
     @Override
@@ -353,11 +403,11 @@ public class FragMusicPlayer extends Fragment implements View.OnClickListener, O
     }
 
     @Override
-    public void onUpdate(MediaPlayer mediaPlayer,MoSong runningSong) {
-        this.runningSong=runningSong;
+    public void onUpdate(MediaPlayer mediaPlayer, MoSong runningSong) {
+        this.runningSong = runningSong;
         updateMusicPlayer();
         try {
-            ((MainActivity) getContext()).prepareBottomPlayer();
+            ((MainActivity) getContext()).prepareBottomPlayer(runningSong);
         } catch (Exception e) {
 
         }
