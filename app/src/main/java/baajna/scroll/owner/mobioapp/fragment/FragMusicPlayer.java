@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -62,7 +63,6 @@ public class FragMusicPlayer extends Fragment implements View.OnClickListener, O
         FragMyPlaylist fragMyPlaylist = new FragMyPlaylist();
         return fragMyPlaylist;
     }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.lay_music_player, container, false);
@@ -84,6 +84,8 @@ public class FragMusicPlayer extends Fragment implements View.OnClickListener, O
         recyclerView.addItemDecoration(new SimpleDividerItemDecoration(getContext()));
         adapter = new AdMusicPlayer(getContext());
         recyclerView.setAdapter(adapter);
+
+
         //instantiate list
         songList = new ArrayList<MoSong>();
 
@@ -234,11 +236,11 @@ public class FragMusicPlayer extends Fragment implements View.OnClickListener, O
         switch (v.getId()) {
             case R.id.img_player_play:
 
-                if(MusicService.isRunning) {
+
                     startIntent = new Intent(getActivity(), MusicService.class);
                     startIntent.setAction(MusicService.PLAY_ACTION);
                     getActivity().startService(startIntent);
-                }
+
 /*
 
 
