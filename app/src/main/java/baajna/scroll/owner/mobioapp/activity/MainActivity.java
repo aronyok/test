@@ -150,6 +150,8 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         } else { //permission is automatically granted on sdk<23 upon installation
+            CommonFunc.savePref(context,"isGranted","true");
+            Globals.isStoragePerGranted=true;
             return true;
         }
 
@@ -284,10 +286,14 @@ public class MainActivity extends AppCompatActivity {
         songbarPlayButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Log.e("BTN",MusicService.playerState+"");
                 if (MusicService.playerState != MusicService.STATE_NOT_READY) {
-                    if (MusicService.songs.size() > 0)
+                    Log.e("BTN","f");
+                    if (MusicService.songs.size() > 0) {
+                        Log.e("BTN","n");
+                        //MusicService.playPause();
                         MusicService.playPause();
+                    }
                 } else {
                     startMusicService();
                 }
@@ -310,7 +316,7 @@ public class MainActivity extends AppCompatActivity {
             title = MusicService.getRunningSongTitle();
             album = MusicService.getRunningSongAlbum();
             songbarPlayButton.setBackgroundResource(R.drawable.pause_icon);
-
+            songbarPlayButton.setEnabled(true);
             /*if (runningSong != null && runningSongID != runningSong.getId()) {
                 Log.e("PAUSE","play state");
                 runningSongID = runningSong.getId();
@@ -320,7 +326,7 @@ public class MainActivity extends AppCompatActivity {
         } else if (MusicService.playerState == MusicService.STATE_PAUSE) {
             Log.e("PAUSE","pause state");
             songbarPlayButton.setBackgroundResource(R.drawable.play_icon);
-
+            songbarPlayButton.setEnabled(true);
             /*String id = new Utils().getSharedPref(Globals.LAST_SONG_ID);
             if (runningSong != null && runningSongID != runningSong.getId()) {
                 runningSongID = runningSong.getId();

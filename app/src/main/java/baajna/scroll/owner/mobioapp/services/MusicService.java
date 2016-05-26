@@ -13,6 +13,7 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.IBinder;
 import android.os.PowerManager;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 import android.view.View;
@@ -141,22 +142,11 @@ public class MusicService extends Service implements
                 if (player.isPlaying()) {
 
                     playPause();
-                    /*notificationView.setTextViewText(R.id.songname_text, runningSong.getTitle() + (player != null && player.isPlaying() ? " is playing" : " is paused"));
-                    notificationView.setImageViewResource(R.id.not_play, R.drawable.play_icon);
-                    notificationView.setViewVisibility(R.id.not_stop, View.VISIBLE);
-                    not.contentView = notificationView;
-                    mNotificationManager.notify(NOTIFY_ID, not);*/
+
                 } else {
                     player.start();
                     playerState = STATE_PLAYING;
-                  /*  //callOnline();
-                    notificationView.setTextViewText(R.id.songname_text,  runningSong.getTitle() + (player!=null&&player.isPlaying()? " is playing":" is paused"));
-                    notificationView.setViewVisibility(R.id.not_stop, View.GONE);
 
-                    notificationView.setImageViewResource(R.id.not_play, R.drawable.pause_icon);
-                    not.contentView = notificationView;
-                    mNotificationManager.notify(NOTIFY_ID, not);
-*/
 
                 }
                 if (iMusic != null) {
@@ -343,21 +333,16 @@ public class MusicService extends Service implements
 
     public static void playPause() {
 
-        if (playerState == STATE_NOT_READY || playerState == STATE_STOP || playerState == 0)
+        if (playerState == STATE_NOT_READY || playerState == STATE_STOP || playerState == 0) {
             playSong(songPosn);
-            //Log.d("Jewel","Call first: "+playerState);
-
+            Log.e("Jewel", "Call first: " + playerState);
+        }
         else if (player != null && player.isPlaying()) {
+            Log.e("Jewel", "Call s: " + playerState);
             isRunning = false;
             player.pause();
             playerState = STATE_PAUSE;
 
-            /*//prepare notification
-            notificationView.setTextViewText(R.id.songname_text,  runningSong.getTitle() + (player!=null&&player.isPlaying()? " is playing":" is paused"));
-            notificationView.setImageViewResource(R.id.not_play, R.drawable.play_icon);
-            notificationView.setViewVisibility(R.id.not_stop, View.VISIBLE);
-            not.contentView = notificationView;
-            mNotificationManager.notify(NOTIFY_ID, not);*/
         }
         else if (player != null && !player.isPlaying()) {
             if (notificationView == null)
@@ -366,19 +351,11 @@ public class MusicService extends Service implements
             //
             playerState = STATE_PLAYING;
             player.start();
-            /*//playSong(songPosn);
-            //isRunning = true;
 
-            //prepare notification
-            notificationView.setTextViewText(R.id.songname_text,  runningSong.getTitle() + (player!=null&&player.isPlaying()? " is playing":" is paused"));
-            notificationView.setViewVisibility(R.id.not_stop, View.GONE);
-            notificationView.setImageViewResource(R.id.not_play, R.drawable.pause_icon);
-            not.contentView = notificationView;
-            mNotificationManager.notify(NOTIFY_ID, not);*/
         }
 
         if (iMusic != null) {
-            iMusic.onUpdate(player,runningSong);
+            iMusic.onUpdate(player, runningSong);
         }
     }
 
@@ -453,6 +430,8 @@ Log.e("MUSIC", "on prepare");
         player.setOnCompletionListener((MediaPlayer.OnCompletionListener) context);
         player.setOnErrorListener((MediaPlayer.OnErrorListener) context);
         player.setOnBufferingUpdateListener((MediaPlayer.OnBufferingUpdateListener) context);
+
+
     }
 
     //pass song list
