@@ -30,6 +30,7 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.mobioapp.baajna.R;
 
+import baajna.scroll.owner.mobioapp.utils.MyApp;
 import baajna.scroll.owner.mobioapp.utils.Urls;
 import baajna.scroll.owner.mobioapp.activity.MainActivity;
 import baajna.scroll.owner.mobioapp.activity.SingleSongActivity;
@@ -168,7 +169,7 @@ public class FragArtistSingleView extends Fragment {
                 public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                     super.onSuccess(statusCode, headers, response);
                     if (CommunicationLayer.parseTopAlbumArtistData(response) == 1) {
-                        if (InternetConnectivity.isConnectedToInternet(getActivity())) {
+                        if (InternetConnectivity.isConnectedToInternet(MyApp.getAppContext())) {
                             AsyncHttpClient client = new AsyncHttpClient();
                             RequestParams params = new RequestParams();
                             params.put("artist_id", artistId);

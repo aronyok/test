@@ -44,6 +44,7 @@ import baajna.scroll.owner.mobioapp.fragment.FragNewRelease;
 import baajna.scroll.owner.mobioapp.interfaces.OnUpdateUI;
 import baajna.scroll.owner.mobioapp.localDatabase.DbManager;
 import baajna.scroll.owner.mobioapp.services.MusicService;
+import baajna.scroll.owner.mobioapp.utils.CommonFunc;
 import baajna.scroll.owner.mobioapp.utils.Globals;
 import baajna.scroll.owner.mobioapp.utils.Urls;
 import baajna.scroll.owner.mobioapp.utils.Utils;
@@ -135,12 +136,16 @@ public class MainActivity extends AppCompatActivity implements IMusic {
     protected void onDestroy() {
         super.onDestroy();
 
-       /* Intent startIntent = new Intent(this, MusicService.class);
-        startIntent.setAction(MusicService.STARTFOREGROUND_ACTION);
-        startService(startIntent);
-*/
+
+
     }
     public  boolean isStoragePermissionGranted() {
+        String granted= CommonFunc.getPref(context, "isGranted");
+        if(granted!=null && granted.equals("true")){
+            Globals.isStoragePerGranted=true;
+            return true;
+        }
+
         if (Build.VERSION.SDK_INT >= 23) {
             if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
                     == PackageManager.PERMISSION_GRANTED) {
@@ -164,11 +169,14 @@ public class MainActivity extends AppCompatActivity implements IMusic {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if(grantResults[0]== PackageManager.PERMISSION_GRANTED){
             Globals.isStoragePerGranted=true;
+            CommonFunc.savePref(context,"isGranted","true");
             //resume tasks needing this permission
         }
     }
 
     private void init() {
+
+        context=this;
         activity = this;
         syncSongInfo();
         fm = getSupportFragmentManager();

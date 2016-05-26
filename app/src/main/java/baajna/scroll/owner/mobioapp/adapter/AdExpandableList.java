@@ -23,6 +23,7 @@ import baajna.scroll.owner.mobioapp.datamodel.MoSong;
 import baajna.scroll.owner.mobioapp.localDatabase.DbManager;
 import baajna.scroll.owner.mobioapp.services.MusicService;
 import baajna.scroll.owner.mobioapp.utils.Globals;
+import baajna.scroll.owner.mobioapp.utils.Utils;
 
 import java.util.HashMap;
 import java.util.List;
@@ -45,6 +46,8 @@ public class AdExpandableList extends BaseExpandableListAdapter {
 
         infalInflater=LayoutInflater.from(_context);
     }
+
+
 
 
     @Override
@@ -192,8 +195,12 @@ public class AdExpandableList extends BaseExpandableListAdapter {
                 if (v == laySongDownload) {
                     imgSongDownload.setImageResource(R.drawable.download_512_active);
                 }
-                if (InternetConnectivity.isConnectedToInternet(_context)&& Globals.isStoragePerGranted) {
+                if (InternetConnectivity.isConnectedToInternet(_context)) {
+                    if(Globals.isStoragePerGranted)
                     CommunicationLayer.getInstance().getDownloadFile("1", selectedSong.getId() + "");
+                    else{
+                        Toast.makeText(_context,"Please at first allow required permission",Toast.LENGTH_LONG).show();
+                    }
 
                 }
 
