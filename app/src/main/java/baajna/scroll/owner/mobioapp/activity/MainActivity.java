@@ -310,8 +310,9 @@ public class MainActivity extends AppCompatActivity implements IMusic {
 
     public void prepareBottomPlayer() {
 
-
+        Log.d("Player State",": " +MusicService.playerState);
         if (MusicService.playerState == MusicService.STATE_PLAYING) {
+
             title = MusicService.getRunningSongTitle();
             album = MusicService.getRunningSongAlbum();
 
