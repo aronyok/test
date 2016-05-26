@@ -8,10 +8,8 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.media.MediaPlayer;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -29,29 +27,13 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.gms.playlog.internal.LogEvent;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
-
-import baajna.scroll.owner.mobioapp.connection.InternetConnectivity;
-import baajna.scroll.owner.mobioapp.datamodel.MoSong;
-import baajna.scroll.owner.mobioapp.datamodel.MoSongCount;
-import baajna.scroll.owner.mobioapp.fragment.FragArtistView;
-import baajna.scroll.owner.mobioapp.fragment.FragDownload;
-import baajna.scroll.owner.mobioapp.fragment.FragHomePage;
-import baajna.scroll.owner.mobioapp.fragment.FragMyPlaylist;
-import baajna.scroll.owner.mobioapp.fragment.FragNewRelease;
-import baajna.scroll.owner.mobioapp.interfaces.OnUpdateUI;
-import baajna.scroll.owner.mobioapp.localDatabase.DbManager;
-import baajna.scroll.owner.mobioapp.services.MusicService;
-import baajna.scroll.owner.mobioapp.utils.CommonFunc;
-import baajna.scroll.owner.mobioapp.utils.Globals;
-import baajna.scroll.owner.mobioapp.utils.Urls;
-import baajna.scroll.owner.mobioapp.utils.Utils;
-import baajna.scroll.owner.mobioapp.fragment.FragAlbum;
-import baajna.scroll.owner.mobioapp.interfaces.IMusic;
-
+import com.mobioapp.baajna.R;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -59,35 +41,42 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import baajna.scroll.owner.mobioapp.connection.InternetConnectivity;
+import baajna.scroll.owner.mobioapp.datamodel.MoSong;
+import baajna.scroll.owner.mobioapp.datamodel.MoSongCount;
+import baajna.scroll.owner.mobioapp.fragment.FragAlbum;
+import baajna.scroll.owner.mobioapp.fragment.FragArtistView;
+import baajna.scroll.owner.mobioapp.fragment.FragDownload;
+import baajna.scroll.owner.mobioapp.fragment.FragHomePage;
+import baajna.scroll.owner.mobioapp.fragment.FragMyPlaylist;
+import baajna.scroll.owner.mobioapp.fragment.FragNewRelease;
+import baajna.scroll.owner.mobioapp.interfaces.IMusic;
+import baajna.scroll.owner.mobioapp.interfaces.OnUpdateUI;
+import baajna.scroll.owner.mobioapp.localDatabase.DbManager;
+import baajna.scroll.owner.mobioapp.services.MusicService;
+import baajna.scroll.owner.mobioapp.utils.CommonFunc;
+import baajna.scroll.owner.mobioapp.utils.Globals;
+import baajna.scroll.owner.mobioapp.utils.Urls;
+import baajna.scroll.owner.mobioapp.utils.Utils;
 import cz.msebera.android.httpclient.Header;
-import com.mobioapp.baajna.R;
-import com.squareup.picasso.Picasso;
 
 
-public class MainActivity extends AppCompatActivity implements IMusic {
-
-
-    private ImageView imageView_SongBar, imgEdit,btnCancel, btnSave;
-    private TextView tvSongTitle, tvSongAlbum;
-    private Button songbarPlayButton;
-
-    private Activity activity;
-
-    private DrawerLayout drawerLayout;
-    private Toolbar toolbar;
-    private FragmentManager fm;
-
-
-    private ArrayList<String> titles;
+public class MainActivity extends AppCompatActivity {
 
 
     public ActionBar actionBar;
-
-    AlertDialog alertDialog;
-    private NavigationView navigationView;
     public SlidingUpPanelLayout mLayout;
-
-    private String title, album,imageSong;
+    AlertDialog alertDialog;
+    private ImageView imageView_SongBar, imgEdit, btnCancel, btnSave;
+    private TextView tvSongTitle, tvSongAlbum;
+    private Button songbarPlayButton;
+    private Activity activity;
+    private DrawerLayout drawerLayout;
+    private Toolbar toolbar;
+    private FragmentManager fm;
+    private ArrayList<String> titles;
+    private NavigationView navigationView;
+    private String title, album, imageSong;
     private OnUpdateUI onUpdateUI;
 
     private MoSong runningSong;
@@ -139,13 +128,13 @@ public class MainActivity extends AppCompatActivity implements IMusic {
         Intent startIntent = new Intent(this, MusicService.class);
         startIntent.setAction(MusicService.STARTFOREGROUND_ACTION);
         startService(startIntent);
-        MusicService.setUpdateInterface(this);
 
     }
-    public  boolean isStoragePermissionGranted() {
-        String granted= CommonFunc.getPref(context, "isGranted");
-        if(granted!=null && granted.equals("true")){
-            Globals.isStoragePerGranted=true;
+
+    public boolean isStoragePermissionGranted() {
+        String granted = CommonFunc.getPref(context, "isGranted");
+        if (granted != null && granted.equals("true")) {
+            Globals.isStoragePerGranted = true;
             return true;
         }
 
@@ -160,26 +149,26 @@ public class MainActivity extends AppCompatActivity implements IMusic {
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
                 return false;
             }
-        }
-        else { //permission is automatically granted on sdk<23 upon installation
+        } else { //permission is automatically granted on sdk<23 upon installation
             return true;
         }
 
 
     }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if(grantResults[0]== PackageManager.PERMISSION_GRANTED){
-            Globals.isStoragePerGranted=true;
-            CommonFunc.savePref(context,"isGranted","true");
+        if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            Globals.isStoragePerGranted = true;
+            CommonFunc.savePref(context, "isGranted", "true");
             //resume tasks needing this permission
         }
     }
 
     private void init() {
 
-        context=this;
+        context = this;
         activity = this;
         syncSongInfo();
         fm = getSupportFragmentManager();
@@ -193,7 +182,7 @@ public class MainActivity extends AppCompatActivity implements IMusic {
         actionBar = getSupportActionBar();
 
 
-        MusicService.setUpdateInterface(this);
+        //  MusicService.setUpdateInterface(this);
         alertDialog = new AlertDialog.Builder(activity).create();
 
 
@@ -276,7 +265,7 @@ public class MainActivity extends AppCompatActivity implements IMusic {
             }
 
             @Override
-            public void onPanelAnchored(View panel){
+            public void onPanelAnchored(View panel) {
 
             }
 
@@ -290,7 +279,7 @@ public class MainActivity extends AppCompatActivity implements IMusic {
         MusicService.songs = mydb.getSongs(DbManager.SQL_SONGS_PLAYLIST_RUNNING);
         mydb.close();
 
-        prepareBottomPlayer();
+        prepareBottomPlayer(runningSong);
         updateUI();
         songbarPlayButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -311,40 +300,53 @@ public class MainActivity extends AppCompatActivity implements IMusic {
     }
 
 
-    public void prepareBottomPlayer() {
+    public void prepareBottomPlayer(MoSong runningSong) {
+        this.runningSong=runningSong;
+        if (runningSong == null)
+            return;
 
-        Log.d("Player State",": " +MusicService.playerState);
         if (MusicService.playerState == MusicService.STATE_PLAYING) {
 
             title = MusicService.getRunningSongTitle();
             album = MusicService.getRunningSongAlbum();
-
-            Log.d("Sajal","Song : "+imageSong);
             songbarPlayButton.setBackgroundResource(R.drawable.pause_icon);
-            songbarPlayButton.setEnabled(true);
+
+            /*if (runningSong != null && runningSongID != runningSong.getId()) {
+                Log.e("PAUSE","play state");
+                runningSongID = runningSong.getId();
+                songbarPlayButton.setBackgroundResource(R.drawable.pause_icon);
+                songbarPlayButton.setEnabled(true);
+            }*/
         } else if (MusicService.playerState == MusicService.STATE_PAUSE) {
-            String id = new Utils().getSharedPref(Globals.LAST_SONG_ID);
+            Log.e("PAUSE","pause state");
             songbarPlayButton.setBackgroundResource(R.drawable.play_icon);
-            songbarPlayButton.setEnabled(true);
-            title = MusicService.getRunningSongTitle() + " paused";
+
+            /*String id = new Utils().getSharedPref(Globals.LAST_SONG_ID);
+            if (runningSong != null && runningSongID != runningSong.getId()) {
+                runningSongID = runningSong.getId();
+                songbarPlayButton.setBackgroundResource(R.drawable.play_icon);
+                songbarPlayButton.setEnabled(true);
+                title = MusicService.getRunningSongTitle() + " paused";
+            }*/
         } else if (MusicService.playerState == MusicService.STATE_NOT_READY) {
             songbarPlayButton.setBackgroundResource(R.drawable.loading);
             songbarPlayButton.setEnabled(false);
         }
         tvSongTitle.setText(title);
         tvSongAlbum.setText(album);
-
-        if(runningSong!=null && runningSongID!=runningSong.getId()) {
+        if (runningSong != null && runningSongID != runningSong.getId()) {
             runningSongID=runningSong.getId();
-            final String imgUrl= runningSong.getImgUrl().isEmpty()? Urls.BASE_URL+Urls.IMG_SONG +"6e83e5d5fee89ad93c147322a1314076.jpg":/*Urls.BASE_URL+Urls.IMG_SONG +*/runningSong.getImgUrl();
+            final String imgUrl = runningSong.getImgUrl().isEmpty() ? Urls.BASE_URL + Urls.IMG_SONG + "6e83e5d5fee89ad93c147322a1314076.jpg" : Urls.BASE_URL + Urls.IMG_SONG + runningSong.getImgUrl();
             Log.e("PIC", imgUrl);
 
-                    Picasso.with(context)
-                            .load(imgUrl)
-                            .placeholder(R.drawable.sync_icon)
-                            .into(imageView_SongBar);
+            Picasso.with(context)
+                    .load(imgUrl)
+                    .placeholder(R.drawable.sync_icon)
+                    .into(imageView_SongBar);
 
         }
+
+
     }
 
     private void updateUI() {
@@ -394,38 +396,32 @@ public class MainActivity extends AppCompatActivity implements IMusic {
     }
 
 
-    @Override
-    public void onUpdate(MediaPlayer mediaPlayer,MoSong runningSong) {
-        this.runningSong=runningSong;
-        prepareBottomPlayer();
-    }
-
     private void startMusicService() {
         Intent startIntent = new Intent(this, MusicService.class);
         startIntent.setAction(MusicService.NORMAL_ACTION);
         startService(startIntent);
-        MusicService.setUpdateInterface(this);
+
     }
 
-    private void syncSongInfo(){
-        DbManager db=new DbManager(this);
-        final ArrayList<MoSongCount>songCounts;
-        songCounts=db.getSongsCount();
+    private void syncSongInfo() {
+        DbManager db = new DbManager(this);
+        final ArrayList<MoSongCount> songCounts;
+        songCounts = db.getSongsCount();
         db.close();
 
         if (InternetConnectivity.isConnectedToInternet(this)) {
             AsyncHttpClient client = new AsyncHttpClient();
             RequestParams params = new RequestParams();
 
-            JSONObject j=new JSONObject();
+            JSONObject j = new JSONObject();
             try {
-                JSONObject jsonObject=new JSONObject();
-                JSONArray jsonArray=new JSONArray();
-                for(int i=0;i<songCounts.size();i++){
-                    jsonObject=new JSONObject();
-                    jsonObject.put("song_id",songCounts.get(i).getSongId());
-                    jsonObject.put("user_app_id","124");
-                    jsonObject.put("action",songCounts.get(i).getAction());
+                JSONObject jsonObject = new JSONObject();
+                JSONArray jsonArray = new JSONArray();
+                for (int i = 0; i < songCounts.size(); i++) {
+                    jsonObject = new JSONObject();
+                    jsonObject.put("song_id", songCounts.get(i).getSongId());
+                    jsonObject.put("user_app_id", "124");
+                    jsonObject.put("action", songCounts.get(i).getAction());
                     jsonObject.put("sync_time", songCounts.get(i).getLastMod());
 
                     jsonArray.put(jsonObject);
@@ -443,14 +439,14 @@ public class MainActivity extends AppCompatActivity implements IMusic {
                     super.onSuccess(statusCode, headers, response);
                     Log.e("JSON______", response.toString());
 
-                    ArrayList<MoSongCount>ss=new ArrayList<MoSongCount>();
-                    for(int i=0;i<songCounts.size();i++){
-                        MoSongCount s=new MoSongCount();
+                    ArrayList<MoSongCount> ss = new ArrayList<MoSongCount>();
+                    for (int i = 0; i < songCounts.size(); i++) {
+                        MoSongCount s = new MoSongCount();
                         s.setSongId(songCounts.get(i).getSongId());
                         s.setStatus(1);
                         ss.add(s);
                     }
-                    DbManager db=new DbManager(MainActivity.this);
+                    DbManager db = new DbManager(MainActivity.this);
                     db.updateSongsCountList(ss);
                     db.close();
                 }
