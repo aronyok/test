@@ -120,7 +120,7 @@ public class FragMusicPlayer extends Fragment implements View.OnClickListener, O
         layShuffle.setOnClickListener(this);
         layLoop.setOnClickListener(this);
 
-        //MusicService.setUpdateInterface(this);
+        MusicService.setUpdateInterface(this);
 
 
         seekBar.setClickable(false);
