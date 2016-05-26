@@ -77,7 +77,7 @@ public class MusicService extends Service implements
     //title of current song
     private static String songTitle = "";
     private static Random rand;
-    private static IMusic iMusic;
+    public static IMusic iMusic;
 
     public static int playerState;
     public static final int STATE_NOT_READY = 1;
@@ -124,7 +124,7 @@ public class MusicService extends Service implements
             if (intent.getAction().equals(MAIN_ACTION)) {
                 Log.e("Jewel", "S-MAIN");
                 if (!player.isPlaying()) {
-                    prepareNotification();
+                    //prepareNotification();
                     playSong(songPosn);
                 } else {
                     player.start();
