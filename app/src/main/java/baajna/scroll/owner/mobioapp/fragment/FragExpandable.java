@@ -54,7 +54,8 @@ public class FragExpandable extends Fragment {
     private View view;
     private Context context;
 
-    public static FragExpandable getInstance(int albumId, int type) {
+    public static FragExpandable getInstance(int albumId, int type)
+    {
         FragExpandable fragExpandable = new FragExpandable();
         Bundle bundle = new Bundle();
         bundle.putInt(ALBUM, albumId);
