@@ -111,6 +111,8 @@
                 android:id="@+id/btn_skip"
                 android:layout_width="@dimen/dp60"
                 android:layout_height="@dimen/dp30"
+                android:layout_marginTop="@dimen/dp5"
+                android:layout_marginBottom="@dimen/dp5"
                 android:layout_gravity="center"
 
                 android:background="@android:color/transparent"
