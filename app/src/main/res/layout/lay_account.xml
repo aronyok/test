@@ -75,7 +75,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:padding="@dimen/dp10">
+                android:padding="@dimen/dp10"
+                android:visibility="gone">
 
                 <com.facebook.login.widget.LoginButton
                     android:id="@+id/facebookLogin"
@@ -110,6 +111,8 @@
                 android:id="@+id/btn_skip"
                 android:layout_width="@dimen/dp60"
                 android:layout_height="@dimen/dp30"
+                android:layout_marginTop="@dimen/dp5"
+                android:layout_marginBottom="@dimen/dp5"
                 android:layout_gravity="center"
 
                 android:background="@android:color/transparent"

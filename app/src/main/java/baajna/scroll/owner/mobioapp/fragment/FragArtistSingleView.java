@@ -462,11 +462,11 @@ public class FragArtistSingleView extends Fragment {
             }
         });
 
-        String imgUrl1 = TextUtils.isEmpty(moSong.getImgUrl()) ? Urls.BASE_URL + Urls.IMG_SONG + "6e83e5d5fee89ad93c147322a1314076.jpg" : Urls.BASE_URL + Urls.IMG_SONG + moSong.getImgUrl();
+        String imgUrl = moSong.getImgUrl().isEmpty() ? Urls.BASE_URL + Urls.IMG_SONG + "6e83e5d5fee89ad93c147322a1314076.jpg" : Urls.BASE_URL + Urls.IMG_SONG+moSong.getImgUrl();
         //String imgUrl= moArtist.getImge().isEmpty()?Urls.BASE_URL+Urls.IMG_ALBUM +"6e83e5d5fee89ad93c147322a1314076.jpg":/*Urls.BASE_URL+Urls.IMG_ALBUM +*/artist.getImge();
-        Log.d("Sajal", "foundUrl" + imgUrl1);
+        Log.d("Sajal", "foundUrl" + imgUrl);
         Picasso.with(context)
-                .load(imgUrl1)
+                .load(imgUrl)
                 .placeholder(R.drawable.main_myplaylist)
                 .into(img);
 

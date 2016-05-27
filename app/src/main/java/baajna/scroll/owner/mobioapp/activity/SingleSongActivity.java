@@ -21,6 +21,8 @@ import android.support.v7.widget.Toolbar;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
@@ -280,7 +282,18 @@ public class SingleSongActivity extends AppCompatActivity {
                 long result = mydb.addToPlaylist(playList);
                 musicService.setSongList(mydb.getSongs(DbManager.SQL_SONGS_PLAYLIST_RUNNING));
                 mydb.close();
-                Toast.makeText(context, "Added player Queue", Toast.LENGTH_LONG).show();
+                //Toast.makeText(context, "Added player Queue", Toast.LENGTH_LONG).show();
+                Context context= MyApp.getAppContext();
+                LayoutInflater inflater=(LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+                View customToastroot =inflater.inflate(R.layout.custom_toast, null);
+
+                Toast customtoast=new Toast(context);
+
+                customtoast.setView(customToastroot);
+                customtoast.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL, 0, 0);
+                customtoast.setDuration(Toast.LENGTH_LONG);
+                customtoast.show();
 
             }
         });
@@ -328,6 +341,17 @@ public class SingleSongActivity extends AppCompatActivity {
                         db.close();
                         Log.d("Jewel", "a " + playLists.size() + ": " + song_id);
                         dialog.dismiss();
+                        Context context= MyApp.getAppContext();
+                        LayoutInflater inflater=(LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+                        View customToastroot =inflater.inflate(R.layout.custom_toast_playlist, null);
+
+                        Toast customtoast=new Toast(context);
+
+                        customtoast.setView(customToastroot);
+                        customtoast.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL, 0, 0);
+                        customtoast.setDuration(Toast.LENGTH_LONG);
+                        customtoast.show();
                     }
                 };
                 adapter.setData(playList1);

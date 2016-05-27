@@ -3,6 +3,7 @@ package baajna.scroll.owner.mobioapp.adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +24,7 @@ import baajna.scroll.owner.mobioapp.datamodel.MoSong;
 import baajna.scroll.owner.mobioapp.localDatabase.DbManager;
 import baajna.scroll.owner.mobioapp.services.MusicService;
 import baajna.scroll.owner.mobioapp.utils.Globals;
+import baajna.scroll.owner.mobioapp.utils.MyApp;
 import baajna.scroll.owner.mobioapp.utils.Utils;
 
 import java.util.ArrayList;
@@ -110,7 +112,18 @@ public class AdExpandableList extends BaseExpandableListAdapter {
                 long result = mydb.addToPlaylist(playList);
                 MusicService.songs = mydb.getSongs(DbManager.SQL_SONGS_PLAYLIST_RUNNING);
                 mydb.close();
-                Toast.makeText(_context, "Added player Queue", Toast.LENGTH_LONG).show();
+                Context context= MyApp.getAppContext();
+                LayoutInflater inflater=(LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+                View customToastroot =inflater.inflate(R.layout.custom_toast, null);
+
+                Toast customtoast=new Toast(context);
+
+                customtoast.setView(customToastroot);
+                customtoast.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL, 0, 0);
+                customtoast.setDuration(Toast.LENGTH_LONG);
+                customtoast.show();
+                //Toast.makeText(_context, "Added player Queue", Toast.LENGTH_LONG).show();
 
 
             }

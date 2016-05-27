@@ -1,6 +1,7 @@
 package baajna.scroll.owner.mobioapp.fragment;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -284,7 +285,18 @@ public class FragAlbum extends Fragment implements SearchView.OnQueryTextListene
                     startIntent.setAction(MusicService.MAIN_ACTION);
                     getContext().startService(startIntent);
                 }
-                Toast.makeText(MyApp.getAppContext(), "Added to music player", Toast.LENGTH_LONG).show();
+                //Toast.makeText(MyApp.getAppContext(), "Added to music player", Toast.LENGTH_LONG).show();
+                Context context= MyApp.getAppContext();
+                LayoutInflater inflater=(LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+                View customToastroot =inflater.inflate(R.layout.custom_toast_player, null);
+
+                Toast customtoast=new Toast(context);
+
+                customtoast.setView(customToastroot);
+                customtoast.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL, 0, 0);
+                customtoast.setDuration(Toast.LENGTH_LONG);
+                customtoast.show();
                 popupWindow.dismiss();
             }
         });
@@ -306,7 +318,18 @@ public class FragAlbum extends Fragment implements SearchView.OnQueryTextListene
                 }
                 db.addPlayLists(playLists);
                 db.close();
-                Toast.makeText(MyApp.getAppContext(), "Added player queue", Toast.LENGTH_LONG).show();
+                Context context= MyApp.getAppContext();
+                LayoutInflater inflater=(LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+                View customToastroot =inflater.inflate(R.layout.custom_toast_album, null);
+
+                Toast customtoast=new Toast(context);
+
+                customtoast.setView(customToastroot);
+                customtoast.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL, 0, 0);
+                customtoast.setDuration(Toast.LENGTH_LONG);
+                customtoast.show();
+                //Toast.makeText(MyApp.getAppContext(), "Added player queue", Toast.LENGTH_LONG).show();
                 popupWindow.dismiss();
             }
         });
@@ -345,7 +368,20 @@ public class FragAlbum extends Fragment implements SearchView.OnQueryTextListene
                         db.addPlayLists(playLists);
                         db.close();
                         Log.d("Jewel", "a " + playLists.size() + ": " + albumId);
+
                         dialog.dismiss();
+                        Context context= MyApp.getAppContext();
+                        LayoutInflater inflater=(LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+                        View customToastroot =inflater.inflate(R.layout.custom_toast_album_playlist, null);
+
+                        Toast customtoast=new Toast(context);
+
+                        customtoast.setView(customToastroot);
+                        customtoast.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL, 0, 0);
+                        customtoast.setDuration(Toast.LENGTH_LONG);
+                        customtoast.show();
+
                     }
                 };
                 adapter.setData(playList1);

@@ -61,10 +61,11 @@ public abstract class AdMusicPlayer extends RecyclerView.Adapter<AdMusicPlayer.M
     public void onBindViewHolder(MyViewHolder holder, int position) {
         MoSong currSong = songs.get(position);
         holder.tvTitle.setText(currSong.getTitle());
-        holder.tvAlbum.setText(currSong.getAlbum_name());
+        holder.tvAlbum.setText(currSong.getArtist_name());
         //holder.imgDownload.setImageResource(currSong.getIsDownloaded()==1);?:;
         holder.imgDownload.setVisibility(currSong.getIsDownloaded() == 1 ? View.INVISIBLE : View.VISIBLE);
-        String imgUrl = TextUtils.isEmpty(currSong.getImgUrl()) ? Urls.BASE_URL + Urls.IMG_SONG + "6e83e5d5fee89ad93c147322a1314076.jpg" : Urls.BASE_URL + Urls.IMG_SONG + currSong.getImgUrl();
+        String imgUrl = TextUtils.isEmpty(currSong.getImgUrl()) ? Urls.BASE_URL + Urls.IMG_SONG + "6e83e5d5fee89ad93c147322a1314076.jpg" :/*Urls.BASE_URL + Urls.IMG_SONG +*/currSong.getImgUrl();
+        Log.e("PIC", imgUrl);
         if (MusicService.songPosn == position)
             holder.img.setImageResource(R.drawable.playing_icon);
         else
