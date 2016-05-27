@@ -2,13 +2,16 @@ package baajna.scroll.owner.mobioapp.activity;
 
 import android.Manifest;
 import android.app.Dialog;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -83,12 +86,18 @@ public class SingleSongActivity extends AppCompatActivity {
 
     private Context context;
 
-    /*public static SingleSongActivity getInstance(int song_id) {
-        SingleSongActivity fragSingleSong = new SingleSongActivity();
-        //bundle.putInt("song_id", song_id);
-        //fragSingleSong.setArguments(bundle);
-        return fragSingleSong;
-    }*/
+    private MusicService musicService;
+    private ServiceConnection serviceConnection=new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            musicService=((MusicService.MyBinder)service).getService();
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            musicService=null;
+        }
+    };
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -99,6 +108,17 @@ public class SingleSongActivity extends AppCompatActivity {
         prepareDis();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        startMusicService();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unbindService(serviceConnection);
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -247,39 +267,6 @@ public class SingleSongActivity extends AppCompatActivity {
         imgSingleSongPlay.setBackgroundResource(R.drawable.img_btn_play);
 
 
-        imgSingleSongPlay.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                /*if (v == imgSingleSongPlay) {
-                    imgSingleSongPlay.setBackgroundResource(MusicService.player.isPlaying() ? R.drawable.ico_pause : R.drawable.ico_play);
-                }*/
-                DbManager mydb = new DbManager(context);
-                MoPlayList playList = new MoPlayList();
-                playList.setId(song_id);
-
-
-                playList.setSongId(song_id);
-                long result = mydb.addToPlaylist(playList);
-                MusicService.songs = mydb.getSongs(DbManager.SQL_SONGS_PLAYLIST_RUNNING);
-                MusicService.songPosn = MusicService.songs.size() - 1;
-                mydb.close();
-                // songs = MusicService.songs;
-                for (int i = 0; i < MusicService.songs.size(); i++) {
-                    if (playList.getSongId() == MusicService.songs.get(i).getId()) {
-                        MusicService.songPosn = i;
-                        break;
-                    }
-                }
-                if (MusicService.isRunning) {
-                    MusicService.playSong(MusicService.songPosn);
-                } else {
-                    startMusicService();
-                }
-            }
-
-
-        });
 
         laySingleSongAddToQueue.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -291,7 +278,7 @@ public class SingleSongActivity extends AppCompatActivity {
 
                 playList.setSongId(song_id);
                 long result = mydb.addToPlaylist(playList);
-                MusicService.songs = mydb.getSongs(DbManager.SQL_SONGS_PLAYLIST_RUNNING);
+                musicService.setSongList(mydb.getSongs(DbManager.SQL_SONGS_PLAYLIST_RUNNING));
                 mydb.close();
                 Toast.makeText(context, "Added player Queue", Toast.LENGTH_LONG).show();
 
@@ -407,23 +394,15 @@ public class SingleSongActivity extends AppCompatActivity {
             }
         });
 
-        /*setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
 
-        ActionBar actionBar = getSupportActionBar();
-        Spannable text = new SpannableString("Albums");
-        text.setSpan(new ForegroundColorSpan(Color.WHITE), 0, text.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
-        actionBar.setTitle(text);
-
-        actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#1B306E")));
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeAsUpIndicator(R.drawable.back_activity);*/
 
     }
 
     private void startMusicService() {
         Intent startIntent = new Intent(context, MusicService.class);
         startIntent.setAction(MusicService.MAIN_ACTION);
-        context.startService(startIntent);
+        startService(startIntent);
+        bindService(startIntent,serviceConnection,Context.BIND_AUTO_CREATE);
     }
 }
 

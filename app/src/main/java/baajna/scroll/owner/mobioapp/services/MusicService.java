@@ -6,14 +6,12 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.Binder;
 import android.os.IBinder;
 import android.os.PowerManager;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 import android.view.View;
@@ -22,19 +20,6 @@ import android.widget.Toast;
 
 import com.mobioapp.baajna.R;
 
-import baajna.scroll.owner.mobioapp.datamodel.MoSong;
-import baajna.scroll.owner.mobioapp.datamodel.MoSongCount;
-import baajna.scroll.owner.mobioapp.fragment.FragMusicPlayer;
-import baajna.scroll.owner.mobioapp.utils.CommonFunc;
-import baajna.scroll.owner.mobioapp.utils.Decryption;
-import baajna.scroll.owner.mobioapp.utils.Globals;
-import baajna.scroll.owner.mobioapp.utils.MyApp;
-import baajna.scroll.owner.mobioapp.utils.SparkleApp;
-import baajna.scroll.owner.mobioapp.utils.Utils;
-import baajna.scroll.owner.mobioapp.activity.MainActivity;
-import baajna.scroll.owner.mobioapp.interfaces.IMusic;
-import baajna.scroll.owner.mobioapp.localDatabase.DbManager;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -42,13 +27,33 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
 
+import baajna.scroll.owner.mobioapp.activity.MainActivity;
+import baajna.scroll.owner.mobioapp.datamodel.MoSong;
+import baajna.scroll.owner.mobioapp.datamodel.MoSongCount;
+import baajna.scroll.owner.mobioapp.interfaces.IMusic;
+import baajna.scroll.owner.mobioapp.localDatabase.DbManager;
+import baajna.scroll.owner.mobioapp.utils.CommonFunc;
+import baajna.scroll.owner.mobioapp.utils.Decryption;
+import baajna.scroll.owner.mobioapp.utils.Globals;
+import baajna.scroll.owner.mobioapp.utils.MyApp;
+import baajna.scroll.owner.mobioapp.utils.SparkleApp;
+import baajna.scroll.owner.mobioapp.utils.Utils;
+
 public class MusicService extends Service implements
         MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener,
         MediaPlayer.OnCompletionListener, MediaPlayer.OnBufferingUpdateListener {
 
 
+    public static final int STATE_NOT_READY = 1;
+    public static final int STATE_PLAYING = 2;
+    public static final int STATE_PAUSE = 3;
+    public static final int STATE_STOP = 4;
+    public static final int STATE_LOADING = 5;
     //notification id
     private static final int NOTIFY_ID = 1;
+    public static IMusic iMusic;
+
+    //action
     public static String NORMAL_ACTION = "com.jewel.sparkle.music_player.action.normal";
     public static String MAIN_ACTION = "com.jewel.sparkle.music_player.action.menu_myplaylist";
     public static String PREV_ACTION = "com.jewel.sparkle.music_player.action.prev";
@@ -57,41 +62,28 @@ public class MusicService extends Service implements
     public static String NEXT_ACTION = "com.jewel.sparkle.music_player.action.next";
     public static String STARTFOREGROUND_ACTION = "com.jewel.sparkle.music_player.action.start_foreground";
     public static String STOPFOREGROUND_ACTION = "com.jewel.sparkle.music_player.action.stop_foreground";
-
-
-    private static int song_id;
     //media player
     public static MediaPlayer player;
-    public static NotificationCompat.Builder builder;
-    public static RemoteViews notificationView;
-    public static Notification not;
-    public static NotificationManager mNotificationManager;
     //song list
     public static ArrayList<MoSong> songs;
     //current position
     public static int songPosn;
-
-    private int songId;
-
-    public static boolean isCreated;
     //shuffle flag and random
     public static boolean shuffle = false, isRunning;
+    public static int playerState;
+    private  NotificationCompat.Builder builder;
+    private  RemoteViews notificationView;
+    private  Notification not;
+    private  NotificationManager mNotificationManager;
+    private static boolean isCreated;
     //title of current song
     private static String songTitle = "";
     private static Random rand;
-    public static IMusic iMusic;
-
-    public static int playerState;
-    public static final int STATE_NOT_READY = 1;
-    public static final int STATE_PLAYING = 2;
-    public static final int STATE_PAUSE = 3;
-    public static final int STATE_STOP = 4;
-    public static final int STATE_LOADING = 5;
-
     private static MoSong runningSong;
 
     private static Context context;
 
+    private IBinder mBinder = new MyBinder();
 
 
     @Override
@@ -111,36 +103,34 @@ public class MusicService extends Service implements
     //activity will bind to service
     @Override
     public IBinder onBind(Intent intent) {
-        return null;
+        return mBinder;
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        Log.e("Jewel", "Started service");
-        isCreated = true;
+        Log.e("Service", "Started service");
+
         if (player == null)
             initMusicPlayer();
-        if (intent != null) {
+        if (intent != null && intent.getAction() != null) {
+
 
             if (intent.getAction().equals(MAIN_ACTION)) {
                 Log.e("Jewel", "S-MAIN");
                 if (!player.isPlaying()) {
-                    //prepareNotification();
                     playSong(songPosn);
                 } else {
                     player.start();
                 }
             } else if (intent.getAction().equals(PREV_ACTION)) {
                 Log.e("Jewel", "S-REV");
-                prepareNotification();
                 playPrev();
-
+                modifyNotification();
             } else if (intent.getAction().equals(PLAY_ACTION)) {
                 Log.e("Jewel", "S-PLAY-pause");
-                prepareNotification();
-                if (player.isPlaying()) {
 
+                if (player.isPlaying()) {
                     playPause();
 
                 } else {
@@ -149,26 +139,23 @@ public class MusicService extends Service implements
 
 
                 }
-                if (iMusic != null) {
-                    iMusic.onUpdate(player, runningSong);
-                }
-
+                modifyNotification();
 
             } else if (intent.getAction().equals(NEXT_ACTION)) {
-                prepareNotification();
                 Log.e("Jewel", "S-NEXT");
                 playNext();
+                modifyNotification();
             } else if (intent.getAction().equals(STARTFOREGROUND_ACTION)) {
-                prepareNotification();
                 Log.e("Jewel", "S-START");
+                if(not!=null)
                 startForeground(1, not);
             } else if (intent.getAction().equals(STOPFOREGROUND_ACTION)) {
-                Log.e("Jewel", "S-STOP");
+                Log.e("Jewel", "S-END");
                 isRunning = false;
-                stopSelf();
+               stopForeground(true);
                 mNotificationManager.cancel(NOTIFY_ID);
-                System.exit(0);
-            }else if(intent.getAction().equals(NORMAL_ACTION)){
+                //System.exit(0);
+            } else if (intent.getAction().equals(NORMAL_ACTION)) {
                 Log.e("Jewel", "S-normal");
 
             }
@@ -182,20 +169,20 @@ public class MusicService extends Service implements
         return START_STICKY;
     }
 
-    public static void setUpdateInterface(IMusic _iMusic) {
+    public void setUpdateInterface(IMusic _iMusic) {
 
         iMusic = _iMusic;
     }
 
-    //play a song
-    public static void playSong(int pos) {
+    //media player
+    public void playSong(int pos) {
         Log.e("Jewel", "S-PLAYSONG");
         if (player == null)
             initMusicPlayer();
         isRunning = false;
         playerState = STATE_NOT_READY;
         if (iMusic != null) {
-            iMusic.onUpdate(player,runningSong);
+            iMusic.onUpdate(player, runningSong);
         }
 
 
@@ -217,16 +204,15 @@ public class MusicService extends Service implements
                 try {
                     Decryption decryption = new Decryption();
                     byte[] data = decryption.decrypt(decryption.getAudioFileFromSdCard(songs.get(songPosn).getFileName()));
-                    Log.e("SONG ID",":"+songs.get(songPosn).getId());
+                    Log.e("SONG ID", ":" + songs.get(songPosn).getId());
                     playMp3(data);
                     Log.e("SONG Name", ":" + songs.get(songPosn).getFileName());
-                    saveSongStatus(songs.get(songPosn).getId(),"offline",0);
+                    saveSongStatus(songs.get(songPosn).getId(), "offline", 0);
 
                 } catch (Exception e) {
                     Log.d("Jewel", e.toString());
                     Toast.makeText(context, "File may be deleted.. Please download again..", Toast.LENGTH_LONG).show();
                 }
-
 
 
             } else {
@@ -249,8 +235,7 @@ public class MusicService extends Service implements
 
     }
 
-
-    private static void playMp3(byte[] mp3SoundByteArray) {
+    private void playMp3(byte[] mp3SoundByteArray) {
 
         try {
 
@@ -291,7 +276,7 @@ public class MusicService extends Service implements
     }
 
     //skip to previous track
-    public static void playPrev() {
+    public void playPrev() {
         if (player == null)
             return;
 
@@ -301,12 +286,12 @@ public class MusicService extends Service implements
         playSong(songPosn);
 
         if (iMusic != null) {
-            iMusic.onUpdate(player,runningSong);
+            iMusic.onUpdate(player, runningSong);
         }
     }
 
     //skip to remoteNext
-    public static void playNext() {
+    public void playNext() {
         if (player == null)
             return;
 
@@ -324,32 +309,28 @@ public class MusicService extends Service implements
         }
         playSong(songPosn);
         if (iMusic != null) {
-            iMusic.onUpdate(player,runningSong);
+            iMusic.onUpdate(player, runningSong);
         }
     }
 
-
-
-
-    public static void playPause() {
+    public void playPause() {
+        Log.e("SERVICE", "Play/pause");
 
         if (playerState == STATE_NOT_READY || playerState == STATE_STOP || playerState == 0) {
             playSong(songPosn);
             Log.e("Jewel", "Call first: " + playerState);
-        }
-        else if (player != null && player.isPlaying()) {
+        } else if (player != null && player.isPlaying()) {
             Log.e("Jewel", "Call s: " + playerState);
             isRunning = false;
             player.pause();
             playerState = STATE_PAUSE;
 
-        }
-        else if (player != null && !player.isPlaying()) {
+        } else if (player != null && !player.isPlaying()) {
             if (notificationView == null)
 
 
-            //
-            playerState = STATE_PLAYING;
+                //
+                playerState = STATE_PLAYING;
             player.start();
 
         }
@@ -359,32 +340,30 @@ public class MusicService extends Service implements
         }
     }
 
-    public static void seek(int posn) {
+    public void seek(int posn) {
 
         player.seekTo(posn);
     }
 
-
-
-    public static String getRunningSongTitle() {
+    public String getRunningSongTitle() {
         return songs.get(songPosn).getTitle();
     }
 
-    public static String getRunningSongAlbum() {
-        return (songs != null && isRunning) ? songs.get(songPosn).getArtist_name():" ";
+    public String getRunningSongAlbum() {
+        return (songs != null && isRunning) ? songs.get(songPosn).getArtist_name() : " ";
     }
 
-
-
-    public static void setShuffle() {
+    public void setShuffle() {
         shuffle = !shuffle;
     }
 
-
     //set the song
     public void setSong(int songIndex) {
+        Log.e("SERVICE", "cal");
         songPosn = songIndex;
     }
+
+    //media player override methods
 
     @Override
     public void onCompletion(MediaPlayer mp) {
@@ -403,7 +382,7 @@ public class MusicService extends Service implements
 
     @Override
     public void onPrepared(MediaPlayer mp) {
-Log.e("MUSIC", "on prepare");
+        Log.e("MUSIC", "on prepare");
         playerState = STATE_PLAYING;
         isRunning = true;
 
@@ -411,13 +390,21 @@ Log.e("MUSIC", "on prepare");
         prepareNotification();
 
         if (iMusic != null) {
-            iMusic.onUpdate(player,runningSong);
+            iMusic.onUpdate(player, runningSong);
         }
 
 
     }
 
-    public static void initMusicPlayer() {
+    @Override
+    public void onBufferingUpdate(MediaPlayer mp, int percent) {
+        Log.d("Jewel", " update : " + percent);
+        if (iMusic != null) {
+            iMusic.onUpdate(player, runningSong);
+        }
+    }
+
+    public void initMusicPlayer() {
 
         //create player
         player = new MediaPlayer();
@@ -435,13 +422,13 @@ Log.e("MUSIC", "on prepare");
     }
 
     //pass song list
-    public void setList(ArrayList<MoSong> theSongs) {
+    public void setSongList(ArrayList<MoSong> theSongs) {
         songs = theSongs;
     }
 
     @Override
     public void onDestroy() {
-        Log.e("MUSIC","destroy");
+        Log.e("SERVICE", "destroy");
         if (songs != null) {
             new Utils().saveSharedPref(Globals.LAST_SONG_ID, songs.get(songPosn).getId() + "");
         }
@@ -455,38 +442,28 @@ Log.e("MUSIC", "on prepare");
         playerState = STATE_STOP;
         mNotificationManager.cancel(NOTIFY_ID);
         if (iMusic != null) {
-            iMusic.onUpdate(player,runningSong);
+            iMusic.onUpdate(player, runningSong);
         }
 
     }
 
-    private static void prepareNotification() {
-        Log.e("NOT","call pre");
+    private void prepareNotification() {
+        Log.e("NOT", "call pre");
         builder = new NotificationCompat.Builder(MyApp.getAppContext());
         notificationView = new RemoteViews(MyApp.getAppContext().getPackageName(), R.layout.notification_view);
-        if(player!=null&&player.isPlaying()){
-            Log.e("NOT","not playing");
-        }else {
-            Log.e("NOT","not paused");
-        }
-        notificationView.setTextViewText(R.id.songname_text,  runningSong.getTitle() + (player!=null&&player.isPlaying()? " is paused":" is playing"));
-        notificationView.setViewVisibility(R.id.not_stop, (player!=null&&player.isPlaying())?View.VISIBLE:View.GONE);
-        notificationView.setImageViewResource(R.id.not_play,(player!=null&&player.isPlaying())? R.drawable.play_icon:R.drawable.pause_icon);
+
+        notificationView.setTextViewText(R.id.songname_text, runningSong.getTitle() + (player != null && player.isPlaying() ? " is playing" : " is paused"));
+        notificationView.setViewVisibility(R.id.not_stop, (player != null && player.isPlaying()) ? View.GONE : View.VISIBLE);
+        notificationView.setImageViewResource(R.id.not_play, (player != null && player.isPlaying()) ? R.drawable.pause_icon : R.drawable.play_icon);
 
         Intent intent = new Intent(MyApp.getAppContext(), MainActivity.class);
-        intent.setAction(STARTFOREGROUND_ACTION);
-        //intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(MyApp.getAppContext(), 0, intent, 0);
 
 
-        Bitmap icon = BitmapFactory.decodeResource(MyApp.getAppContext().getResources(), R.drawable.button_songbar_pause);
-        not = builder.setLargeIcon(icon)
+        not = builder
                 .setSmallIcon(R.drawable.button_songbar_pause)
-                .setTicker(songTitle)
                 .setOngoing(true)
-                .setContentTitle("Playing")
                 .setContentIntent(pendingIntent)
-                .setContentText(songTitle)
                 .build();
 
 
@@ -521,28 +498,24 @@ Log.e("MUSIC", "on prepare");
         //startForeground(NOTIFY_ID, not);
     }
 
-    public static int getState() {
-        if (player != null && !player.isPlaying() && playerState == 2) {
-            playerState = 3;
-        }
+    private void modifyNotification() {
+        Log.e("SERVICE","call mod");
+        if(notificationView==null)
+            return;
+        notificationView.setTextViewText(R.id.songname_text, runningSong.getTitle() + (player != null && player.isPlaying() ? " is playing" : " is paused"));
+        notificationView.setViewVisibility(R.id.not_stop, (player != null && player.isPlaying()) ? View.GONE : View.VISIBLE);
+        notificationView.setImageViewResource(R.id.not_play, (player != null && player.isPlaying()) ? R.drawable.pause_icon : R.drawable.play_icon);
 
-        return playerState;
+
+        not.contentView = notificationView;
+
+
+        mNotificationManager.notify(NOTIFY_ID, not);
     }
 
-
-    @Override
-    public void onBufferingUpdate(MediaPlayer mp, int percent) {
-        Log.d("Jewel", " update : " + percent);
-        if (iMusic != null) {
-            iMusic.onUpdate(player,runningSong);
-        }
-    }
-
-
-
-    private static void saveSongStatus(int id,String action,int status)  {
-        DbManager db=new DbManager(MyApp.getAppContext());
-        MoSongCount s=new MoSongCount();
+    private void saveSongStatus(int id, String action, int status) {
+        DbManager db = new DbManager(MyApp.getAppContext());
+        MoSongCount s = new MoSongCount();
         s.setSongId(id);
         s.setAction(action);
         s.setStatus(status);
@@ -550,7 +523,12 @@ Log.e("MUSIC", "on prepare");
         db.addSongCount(s);
     }
 
+    public class MyBinder extends Binder {
+        public MusicService getService() {
+            return MusicService.this;
+        }
 
+    }
 
 
 }

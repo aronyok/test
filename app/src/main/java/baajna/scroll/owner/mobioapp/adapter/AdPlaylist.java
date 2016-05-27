@@ -99,9 +99,7 @@ public abstract class AdPlaylist extends RecyclerView.Adapter<AdPlaylist.MyViewH
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    //MoPlayList album= playList.get(getAdapterPosition());
                     onAfterClick(v,getAdapterPosition());
-                    //((MainActivity)context).replaceFrag(FragExpandableList.getInstance(album.getId(), 1), album.getName());
 
                 }
             });

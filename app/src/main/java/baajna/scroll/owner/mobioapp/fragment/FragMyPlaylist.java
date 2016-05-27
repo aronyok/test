@@ -63,7 +63,7 @@ public class FragMyPlaylist extends Fragment {
         adapter=new AdPlaylist(getContext()) {
             @Override
             public void onAfterClick(View view, int position) {
-                ((MainActivity)getContext()).replaceFrag(FragExpandableList.getInstance(playList.get(position).getId(), Globals.TYPE_EXP_PLAYLIST), playList.get(position).getName());
+                ((MainActivity)getContext()).replaceFrag(FragExpandable.getInstance(playList.get(position).getId(), Globals.TYPE_EXP_PLAYLIST), playList.get(position).getName());
             }
         };
         recyclerView.setAdapter(adapter);

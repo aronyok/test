@@ -599,51 +599,7 @@ public class FragHomePage extends Fragment implements OnQueryTextListener {
 
     }
 
-    private LinearLayout prepareViewMoodsGenresView(final MoGenres moGenres) {
 
-        LinearLayout lay = (LinearLayout) inflater.inflate(R.layout.row_home_moods_genres, null);
-        lay.setPadding(0, 0, 0, 12);
-        lay.setBackgroundColor(Color.parseColor("#fafafa"));
-        FrameLayout frameLayout1 = (FrameLayout) lay.findViewById(R.id.row_albumhome1);
-        FrameLayout frameLayout2 = (FrameLayout) lay.findViewById(R.id.row_albumhome2);
-
-        TextView textView1 = (TextView) lay.findViewById(R.id.tv_new_release_title1);
-        TextView textView2 = (TextView) lay.findViewById(R.id.tv_new_release_title2);
-        textView1.setText(moGenres.getTitle1());
-        textView2.setText(moGenres.getTitle2());
-        frameLayout1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ((MainActivity) context).replaceFrag(FragGenreAlbums.getInstance(moGenres.getId1()), moGenres.getTitle());
-
-            }
-        });
-        frameLayout2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ((MainActivity) context).replaceFrag(FragGenreAlbums.getInstance(moGenres.getId2()), moGenres.getTitle());
-                Log.d("Sajal", "2 clicked");
-            }
-        });
-        ImageView imageView1 = (ImageView) lay.findViewById(R.id.img_new_albums1);
-        ImageView imageView2 = (ImageView) lay.findViewById(R.id.img_new_albums2);
-
-        String imgUrl = TextUtils.isEmpty(moGenres.getImgurl2()) ? Urls.BASE_URL + Urls.IMG_GENRE + "6e83e5d5fee89ad93c147322a1314076.jpg" : Urls.BASE_URL + Urls.IMG_GENRE + moGenres.getImgurl2();
-
-        Picasso.with(context)
-                .load(imgUrl)
-                .placeholder(R.drawable.image_default)
-                .into(imageView1);
-        Picasso.with(context)
-                .load(imgUrl)
-                .placeholder(R.drawable.image_default)
-                .into(imageView2);
-
-
-        return lay;
-
-
-    }
 
     private View makeHorizentalGridArtists(ArrayList<MoArtist> artists) {
 

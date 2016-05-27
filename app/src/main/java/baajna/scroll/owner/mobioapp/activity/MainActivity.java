@@ -3,13 +3,15 @@ package baajna.scroll.owner.mobioapp.activity;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
-import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -27,7 +29,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.android.gms.playlog.internal.LogEvent;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
@@ -50,14 +51,12 @@ import baajna.scroll.owner.mobioapp.fragment.FragDownload;
 import baajna.scroll.owner.mobioapp.fragment.FragHomePage;
 import baajna.scroll.owner.mobioapp.fragment.FragMyPlaylist;
 import baajna.scroll.owner.mobioapp.fragment.FragNewRelease;
-import baajna.scroll.owner.mobioapp.interfaces.IMusic;
 import baajna.scroll.owner.mobioapp.interfaces.OnUpdateUI;
 import baajna.scroll.owner.mobioapp.localDatabase.DbManager;
 import baajna.scroll.owner.mobioapp.services.MusicService;
 import baajna.scroll.owner.mobioapp.utils.CommonFunc;
 import baajna.scroll.owner.mobioapp.utils.Globals;
 import baajna.scroll.owner.mobioapp.utils.Urls;
-import baajna.scroll.owner.mobioapp.utils.Utils;
 import cz.msebera.android.httpclient.Header;
 
 
@@ -66,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
 
     public ActionBar actionBar;
     public SlidingUpPanelLayout mLayout;
-    AlertDialog alertDialog;
+    private AlertDialog alertDialog;
     private ImageView imageView_SongBar, imgEdit, btnCancel, btnSave;
     private TextView tvSongTitle, tvSongAlbum;
     private Button songbarPlayButton;
@@ -84,6 +83,7 @@ public class MainActivity extends AppCompatActivity {
 
     private Context context;
 
+    public  MusicService musicService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,76 +96,41 @@ public class MainActivity extends AppCompatActivity {
         //callOnline();
     }
 
-    public void setOnUpdateUI(OnUpdateUI onUpdateUI) {
-        this.onUpdateUI = onUpdateUI;
-    }
-
-
-    @Override
-    public void onBackPressed() {
-
-
-        if (mLayout != null &&
-                (mLayout.getPanelState() == SlidingUpPanelLayout.PanelState.EXPANDED || mLayout.getPanelState() == SlidingUpPanelLayout.PanelState.ANCHORED)) {
-            mLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
-        } else {
-            super.onBackPressed();
-            if (titles != null && titles.size() > 1) {
-                titles.remove(titles.size() - 1);
-                setActionbarTitle(titles.get(titles.size() - 1));
-
-            }
+    private ServiceConnection serviceConnection=new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            musicService=((MusicService.MyBinder)service).getService();
+            DbManager mydb = new DbManager(MainActivity.this);
+            musicService.setSongList(mydb.getSongs(DbManager.SQL_SONGS_PLAYLIST_RUNNING));
+            mydb.close();
         }
 
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            musicService=null;
+            Log.e("SERVICE","discon");
+        }
+    };
 
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        startMusicService();
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unbindService(serviceConnection);
+    }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
-        Intent startIntent = new Intent(this, MusicService.class);
-        startIntent.setAction(MusicService.STARTFOREGROUND_ACTION);
-        startService(startIntent);
-
-    }
-
-    public boolean isStoragePermissionGranted() {
-        String granted = CommonFunc.getPref(context, "isGranted");
-        if (granted != null && granted.equals("true")) {
-            Globals.isStoragePerGranted = true;
-            return true;
-        }
-
-        if (Build.VERSION.SDK_INT >= 23) {
-            if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                    == PackageManager.PERMISSION_GRANTED) {
-
-                return true;
-            } else {
-
-
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
-                return false;
-            }
-        } else { //permission is automatically granted on sdk<23 upon installation
-            CommonFunc.savePref(context,"isGranted","true");
-            Globals.isStoragePerGranted=true;
-            return true;
-        }
-
-
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            Globals.isStoragePerGranted = true;
-            CommonFunc.savePref(context, "isGranted", "true");
-            //resume tasks needing this permission
-        }
+        Intent intent=new Intent(context,MusicService.class);
+        intent.setAction(MusicService.STARTFOREGROUND_ACTION);
+        startService(intent);
     }
 
     private void init() {
@@ -184,7 +149,6 @@ public class MainActivity extends AppCompatActivity {
         actionBar = getSupportActionBar();
 
 
-        //  MusicService.setUpdateInterface(this);
         alertDialog = new AlertDialog.Builder(activity).create();
 
 
@@ -277,28 +241,16 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-        DbManager mydb = new DbManager(MainActivity.this);
-        MusicService.songs = mydb.getSongs(DbManager.SQL_SONGS_PLAYLIST_RUNNING);
-        mydb.close();
+
 
         prepareBottomPlayer(runningSong);
-        updateUI();
+
         songbarPlayButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.e("BTN",MusicService.playerState+"");
-                if (MusicService.playerState != MusicService.STATE_NOT_READY) {
-                    Log.e("BTN","f");
-                    if (MusicService.songs.size() > 0) {
-                        Log.e("BTN","n");
-                        //MusicService.playPause();
-                        MusicService.playPause();
-                    }
-                } else {
-                    startMusicService();
-                }
-
-
+                Intent intent=new Intent(context,MusicService.class);
+                intent.setAction(MusicService.PLAY_ACTION);
+                startService(intent);
             }
         });
 
@@ -306,40 +258,98 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public void prepareBottomPlayer(MoSong runningSong) {
-        this.runningSong=runningSong;
+    public void setOnUpdateUI(OnUpdateUI onUpdateUI) {
+        this.onUpdateUI = onUpdateUI;
+    }
+
+
+    @Override
+    public void onBackPressed() {
+
+
+        if (mLayout != null &&
+                (mLayout.getPanelState() == SlidingUpPanelLayout.PanelState.EXPANDED || mLayout.getPanelState() == SlidingUpPanelLayout.PanelState.ANCHORED)) {
+            mLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
+        } else {
+            super.onBackPressed();
+            if (titles != null && titles.size() > 1) {
+                titles.remove(titles.size() - 1);
+                setActionbarTitle(titles.get(titles.size() - 1));
+
+            }
+        }
+
+
+    }
+
+
+
+    public boolean isStoragePermissionGranted() {
+        String granted = CommonFunc.getPref(context, "isGranted");
+        if (granted != null && granted.equals("true")) {
+            Globals.isStoragePerGranted = true;
+            return true;
+        }
+
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    == PackageManager.PERMISSION_GRANTED) {
+
+                return true;
+            } else {
+
+
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+                return false;
+            }
+        } else { //permission is automatically granted on sdk<23 upon installation
+            CommonFunc.savePref(context,"isGranted","true");
+            Globals.isStoragePerGranted=true;
+            return true;
+        }
+
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            Globals.isStoragePerGranted = true;
+            CommonFunc.savePref(context, "isGranted", "true");
+            //resume tasks needing this permission
+        }
+    }
+
+
+
+    public void prepareBottomPlayer(MoSong _runningSong) {
+        Log.e("MAIN", "call m");
+        runningSong=_runningSong;
         if (runningSong == null)
             return;
-
-        if (MusicService.playerState == MusicService.STATE_PLAYING) {
-
-            title = MusicService.getRunningSongTitle();
-            album = MusicService.getRunningSongAlbum();
-            songbarPlayButton.setBackgroundResource(R.drawable.pause_icon);
-            songbarPlayButton.setEnabled(true);
-            /*if (runningSong != null && runningSongID != runningSong.getId()) {
-                Log.e("PAUSE","play state");
-                runningSongID = runningSong.getId();
-                songbarPlayButton.setBackgroundResource(R.drawable.pause_icon);
-                songbarPlayButton.setEnabled(true);
-            }*/
-        } else if (MusicService.playerState == MusicService.STATE_PAUSE) {
-            Log.e("PAUSE","pause state");
-            songbarPlayButton.setBackgroundResource(R.drawable.play_icon);
-            songbarPlayButton.setEnabled(true);
-            /*String id = new Utils().getSharedPref(Globals.LAST_SONG_ID);
-            if (runningSong != null && runningSongID != runningSong.getId()) {
-                runningSongID = runningSong.getId();
+        tvSongTitle.setText(runningSong.getTitle());
+        tvSongAlbum.setText(runningSong.getAlbum_name());
+        songbarPlayButton.setEnabled(true);
+        switch (MusicService.playerState){
+            case MusicService.STATE_LOADING:
+                songbarPlayButton.setBackgroundResource(R.drawable.loading);
+                break;
+            case MusicService.STATE_PAUSE:
                 songbarPlayButton.setBackgroundResource(R.drawable.play_icon);
-                songbarPlayButton.setEnabled(true);
-                title = MusicService.getRunningSongTitle() + " paused";
-            }*/
-        } else if (MusicService.playerState == MusicService.STATE_NOT_READY) {
-            songbarPlayButton.setBackgroundResource(R.drawable.loading);
-            songbarPlayButton.setEnabled(false);
+                break;
+            case MusicService.STATE_PLAYING:
+                songbarPlayButton.setBackgroundResource(R.drawable.pause_icon);
+                break;
+            case MusicService.STATE_NOT_READY:
+                songbarPlayButton.setBackgroundResource(R.drawable.loading);
+                break;
         }
-        tvSongTitle.setText(title);
-        tvSongAlbum.setText(album);
+
+
+
+
+
         if (runningSong != null && runningSongID != runningSong.getId()) {
             runningSongID=runningSong.getId();
             final String imgUrl = runningSong.getImgUrl().isEmpty() ? Urls.BASE_URL + Urls.IMG_SONG + "6e83e5d5fee89ad93c147322a1314076.jpg" : Urls.BASE_URL + Urls.IMG_SONG + runningSong.getImgUrl();
@@ -355,9 +365,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void updateUI() {
-
-    }
 
 
     public void replaceFrag(Fragment fragment, String title) {
@@ -394,18 +401,14 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
 
-        //updateUI();
-    }
 
 
     private void startMusicService() {
         Intent startIntent = new Intent(this, MusicService.class);
         startIntent.setAction(MusicService.NORMAL_ACTION);
         startService(startIntent);
+        bindService(startIntent, serviceConnection, Context.BIND_AUTO_CREATE);
 
     }
 

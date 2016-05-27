@@ -75,6 +75,7 @@ public class FragArtistSingleView extends Fragment {
     private LayoutInflater inflater;
     private AdView mAdView;
     private FrameLayout rowHome2;
+    private MusicService musicService;
 
     public static FragArtistSingleView getInstance(int artistId, int albumId) {
 
@@ -109,6 +110,7 @@ public class FragArtistSingleView extends Fragment {
 
 
     private void initViews() {
+        musicService=((MainActivity)getContext()).musicService;
         context = getActivity();
         inflater = LayoutInflater.from(context);
 
@@ -435,7 +437,7 @@ public class FragArtistSingleView extends Fragment {
                     }
                 }
                 if (MusicService.isRunning) {
-                    MusicService.playSong(MusicService.songPosn);
+                    musicService.playSong(MusicService.songPosn);
                 } else {
                     /*Intent playIntent = new Intent(_context, MusicPlayerActivity.class);
                     playIntent.putExtra("ParentClassName", "SongListActivity");

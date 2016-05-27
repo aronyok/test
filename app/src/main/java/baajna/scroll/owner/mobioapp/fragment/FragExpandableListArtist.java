@@ -16,12 +16,14 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.mobioapp.baajna.R;
 
+import baajna.scroll.owner.mobioapp.activity.MainActivity;
 import baajna.scroll.owner.mobioapp.adapter.AdExpandableList;
 import baajna.scroll.owner.mobioapp.connection.InternetConnectivity;
 import baajna.scroll.owner.mobioapp.datamodel.MoArtist;
 import baajna.scroll.owner.mobioapp.datamodel.MoSong;
 import baajna.scroll.owner.mobioapp.localDatabase.DbManager;
 import baajna.scroll.owner.mobioapp.parser.CommunicationLayer;
+import baajna.scroll.owner.mobioapp.services.MusicService;
 import baajna.scroll.owner.mobioapp.utils.Globals;
 import baajna.scroll.owner.mobioapp.utils.SparkleApp;
 import baajna.scroll.owner.mobioapp.utils.Urls;
@@ -52,6 +54,7 @@ public class FragExpandableListArtist extends Fragment {
     private HashMap<String, List<String>> listDataChild;
     private View view;
     private Context context;
+    private MusicService musicService;
 
     public static FragExpandableListArtist getInstance(int artistId, int type)
     {
@@ -75,6 +78,7 @@ public class FragExpandableListArtist extends Fragment {
 
     private void init() {
         // get the listview
+        musicService=((MainActivity)getContext()).musicService;
         expandableListView = (ExpandableListView) view.findViewById(R.id.exp_list_view);
 
 
@@ -157,7 +161,7 @@ public class FragExpandableListArtist extends Fragment {
 
         //listDataHeader = SparkleApp.getInstance().getSongList();
         getDBData();
-        listAdapter = new AdExpandableList(context, listDataHeader, listDataChild);
+        listAdapter = new AdExpandableList(context, listDataHeader, listDataChild,musicService);
 
         // setting list adapter
         expandableListView.setAdapter(listAdapter);

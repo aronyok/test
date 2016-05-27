@@ -1,9 +1,13 @@
 package baajna.scroll.owner.mobioapp.fragment;
 
 import android.app.Dialog;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.GridLayoutManager;
@@ -57,7 +61,18 @@ public class FragAlbumArtist extends Fragment implements SearchView.OnQueryTextL
     private AdAlbum adapter;
     private View view;
     private ArrayList<MoAlbum> albums;
+    private MusicService musicService;
+    private ServiceConnection serviceConnection=new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            musicService=((MusicService.MyBinder)service).getService();
+        }
 
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            musicService=null;
+        }
+    };
     public static FragAlbumArtist getInstance()
     {
         FragAlbumArtist fragAlbum = new FragAlbumArtist();
@@ -79,7 +94,21 @@ public class FragAlbumArtist extends Fragment implements SearchView.OnQueryTextL
         setListener();
         loadData();
     }
+    @Override
+    public void onResume() {
+        super.onResume();
+        Intent intent=new Intent(getContext(),MusicService.class);
+        intent.setAction(MusicService.NORMAL_ACTION);
+        getContext().startService(intent);
+        getContext().bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
 
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        getContext().unbindService(serviceConnection);
+    }
 
     private void initViews() {
         albums = new ArrayList<>();
@@ -279,7 +308,7 @@ public class FragAlbumArtist extends Fragment implements SearchView.OnQueryTextL
                     }
                 }
                 if (MusicService.isRunning) {
-                    MusicService.playSong(MusicService.songPosn);
+                    musicService.playSong(MusicService.songPosn);
                 } else {
 
                     Intent startIntent = new Intent(getContext(), MusicService.class);

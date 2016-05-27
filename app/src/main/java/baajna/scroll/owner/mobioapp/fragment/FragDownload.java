@@ -1,8 +1,12 @@
 package baajna.scroll.owner.mobioapp.fragment;
 
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.IBinder;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -17,6 +21,7 @@ import android.view.ViewGroup;
 import com.mobioapp.baajna.R;
 
 import baajna.scroll.owner.mobioapp.adapter.AdDownload;
+import baajna.scroll.owner.mobioapp.services.MusicService;
 import baajna.scroll.owner.mobioapp.utils.MyApp;
 import baajna.scroll.owner.mobioapp.datamodel.MoSong;
 import baajna.scroll.owner.mobioapp.localDatabase.DbManager;
@@ -40,6 +45,20 @@ public class FragDownload extends Fragment {
 
     private static FragDownload fragDownload;
 
+    private MusicService musicService;
+    private ServiceConnection serviceConnection=new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            musicService=((MusicService.MyBinder)service).getService();
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            musicService=null;
+        }
+    };
+
+
 
     public static FragDownload getInstance() {
 
@@ -58,6 +77,21 @@ public class FragDownload extends Fragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        Intent intent=new Intent(getContext(),MusicService.class);
+        intent.setAction(MusicService.NORMAL_ACTION);
+        getContext().startService(intent);
+        getContext().bindService(intent,serviceConnection,Context.BIND_AUTO_CREATE);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        getContext().unbindService(serviceConnection);
+    }
+
+    @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         setHasOptionsMenu(true);
@@ -69,7 +103,7 @@ public class FragDownload extends Fragment {
         songs = db.getSongs(DbManager.SQL_SONGS_DOWNLOAD);
         db.close();
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
-        adapter = new AdDownload(context);
+        adapter =new AdDownload(context,musicService) ;
         adapter.setData(songs, false);
         recyclerView.setAdapter(adapter);
 

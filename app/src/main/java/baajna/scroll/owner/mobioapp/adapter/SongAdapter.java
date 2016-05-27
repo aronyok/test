@@ -31,15 +31,17 @@ public class SongAdapter extends BaseAdapter {
     private LayoutInflater songInf;
     private Context context;
     private RelativeLayout songLay;
+    private MusicService musicService;
 
     //constructor
-    public SongAdapter(Context context, ArrayList<MoSong> theSongs) {
+    public SongAdapter(Context context, ArrayList<MoSong> theSongs,MusicService musicService) {
         this.context = context;
         songs = theSongs;
         songInf = LayoutInflater.from(context);
+        this.musicService=musicService;
     }
 
-    public void setSongs(ArrayList<MoSong> songs) {
+    public void setSongs(ArrayList<MoSong> songs,int as) {
         this.songs = songs;
         notifyDataSetChanged();
     }
@@ -96,7 +98,7 @@ public class SongAdapter extends BaseAdapter {
 
             @Override
             public void onClick(View v) {
-                MusicService.playSong(position);
+                musicService.playSong(position);
 
 
             }

@@ -58,6 +58,7 @@ public class FragAlbum extends Fragment implements SearchView.OnQueryTextListene
     private View view;
     private ArrayList<MoAlbum> albums;
 
+    private MusicService musicService;
 
     public static FragAlbum getInstance() {
         FragAlbum fragAlbum = new FragAlbum();
@@ -82,6 +83,7 @@ public class FragAlbum extends Fragment implements SearchView.OnQueryTextListene
 
 
     private void initViews() {
+        musicService=((MainActivity)getContext()).musicService;
         albums = new ArrayList<>();
         recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
         adapter = new AdAlbum(getActivity()) {
@@ -275,7 +277,7 @@ public class FragAlbum extends Fragment implements SearchView.OnQueryTextListene
                     }
                 }
                 if (MusicService.isRunning) {
-                    MusicService.playSong(MusicService.songPosn);
+                    musicService.playSong(MusicService.songPosn);
                 } else {
 
                     Intent startIntent = new Intent(getContext(), MusicService.class);

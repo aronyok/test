@@ -63,6 +63,7 @@ public class FragArtistAlbums extends Fragment implements SearchView.OnQueryText
     private int lastExpandedPosition = -1, artistId, type;
     private ArrayList<MoAlbum> albums;
     Context context;
+    private MusicService musicService;
 
     public static FragArtistAlbums getInstance(int artistId) {
         FragArtistAlbums fragAlbum = new FragArtistAlbums();
@@ -91,6 +92,7 @@ public class FragArtistAlbums extends Fragment implements SearchView.OnQueryText
 
 
     private void initViews() {
+        musicService=((MainActivity)getContext()).musicService;
         albums = new ArrayList<>();
         recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
         adapter = new AdAlbum(getActivity()) {
@@ -304,7 +306,7 @@ public class FragArtistAlbums extends Fragment implements SearchView.OnQueryText
                     }
                 }
                 if (MusicService.isRunning) {
-                    MusicService.playSong(MusicService.songPosn);
+                    musicService.playSong(MusicService.songPosn);
                 } else {
 
                     Intent startIntent = new Intent(getContext(), MusicService.class);

@@ -1,7 +1,11 @@
 package baajna.scroll.owner.mobioapp.fragment;
 
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,6 +23,7 @@ import com.mobioapp.baajna.R;
 import baajna.scroll.owner.mobioapp.connection.InternetConnectivity;
 import baajna.scroll.owner.mobioapp.datamodel.MoAlbum;
 import baajna.scroll.owner.mobioapp.parser.CommunicationLayer;
+import baajna.scroll.owner.mobioapp.services.MusicService;
 import baajna.scroll.owner.mobioapp.utils.Globals;
 import baajna.scroll.owner.mobioapp.utils.Urls;
 import baajna.scroll.owner.mobioapp.adapter.AdExpandableList;
@@ -54,6 +59,19 @@ public class FragExpandable extends Fragment {
     private View view;
     private Context context;
 
+    private MusicService musicService;
+    private ServiceConnection serviceConnection=new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            musicService=((MusicService.MyBinder)service).getService();
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            musicService=null;
+        }
+    };
+
     public static FragExpandable getInstance(int albumId, int type) {
         FragExpandable fragExpandable = new FragExpandable();
         Bundle bundle = new Bundle();
@@ -72,6 +90,20 @@ public class FragExpandable extends Fragment {
         return view;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        Intent intent=new Intent(getContext(),MusicService.class);
+        intent.setAction(MusicService.NORMAL_ACTION);
+        getContext().startService(intent);
+        getContext().bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        getContext().unbindService(serviceConnection);
+    }
 
     private void init() {
         // get the listview
@@ -156,7 +188,7 @@ public class FragExpandable extends Fragment {
                 .placeholder(R.drawable.main_myplaylist)
                 .into(img_Expandable);
 
-        listAdapter = new AdExpandableList(context, listDataHeader, listDataChild);
+        listAdapter = new AdExpandableList(context, listDataHeader, listDataChild,musicService);
 
         // setting list adapter
         expandableListView.setAdapter(listAdapter);

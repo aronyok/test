@@ -25,6 +25,7 @@ import baajna.scroll.owner.mobioapp.services.MusicService;
 import baajna.scroll.owner.mobioapp.utils.Globals;
 import baajna.scroll.owner.mobioapp.utils.Utils;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -38,12 +39,13 @@ public class AdExpandableList extends BaseExpandableListAdapter {
     private List<MoSong> _listDataHeader;
     private HashMap<String, List<String>> _listDataChild; //child data in format of header title
     private LayoutInflater infalInflater;
+    private MusicService musicService;
 
-    public AdExpandableList(Context context, List<MoSong> listDataHeader, HashMap<String, List<String>> listDataChild) {
+    public AdExpandableList(Context context, List<MoSong> listDataHeader, HashMap<String, List<String>> listDataChild,MusicService musicService) {
         this._context = context;
         this._listDataHeader = listDataHeader;
         this._listDataChild = listDataChild;
-
+        this.musicService=musicService;
         infalInflater=LayoutInflater.from(_context);
     }
 
@@ -82,29 +84,17 @@ public class AdExpandableList extends BaseExpandableListAdapter {
                 playList.setId(0);
                 playList.setSongId(_listDataHeader.get(groupPosition).getId());
                 long result = mydb.addToPlaylist(playList);
-                MusicService.songs = mydb.getSongs(DbManager.SQL_SONGS_PLAYLIST_RUNNING);
+                ArrayList<MoSong>songs = mydb.getSongs(DbManager.SQL_SONGS_PLAYLIST_RUNNING);
                 MusicService.songPosn = MusicService.songs.size() - 1;
                 mydb.close();
                // songs = MusicService.songs;
-                for (int i = 0; i < MusicService.songs.size(); i++) {
-                    if (playList.getSongId() == MusicService.songs.get(i).getId()) {
+                for (int i = 0; i < songs.size(); i++) {
+                    if (playList.getSongId() == songs.get(i).getId()) {
                         MusicService.songPosn = i;
                         break;
                     }
                 }
-                if (MusicService.isRunning) {
-                    MusicService.playSong(MusicService.songPosn);
-                } else {
-                    /*Intent playIntent = new Intent(_context, MusicPlayerActivity.class);
-                    playIntent.putExtra("ParentClassName", "SongListActivity");
-                    playIntent.putExtra("song_index", groupPosition);
-                    //Globals.songNumber = selectedPos;
-                    _context.startActivity(playIntent);*/
-
-
-                    startMusicService();
-                }
-
+                musicService.playSong(MusicService.songPosn);
 
             }
         });
@@ -222,9 +212,5 @@ public class AdExpandableList extends BaseExpandableListAdapter {
         return true;
     }
 
-    private void startMusicService() {
-        Intent startIntent = new Intent(_context, MusicService.class);
-        startIntent.setAction(MusicService.MAIN_ACTION);
-        _context.startService(startIntent);
-    }
+
 }

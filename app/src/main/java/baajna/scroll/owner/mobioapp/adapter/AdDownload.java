@@ -1,7 +1,6 @@
 package baajna.scroll.owner.mobioapp.adapter;
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,19 +9,17 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.mobioapp.baajna.R;
+import com.squareup.picasso.Picasso;
+
+import java.util.ArrayList;
 
 import baajna.scroll.owner.mobioapp.datamodel.MoPlayList;
-import baajna.scroll.owner.mobioapp.utils.MyApp;
-import baajna.scroll.owner.mobioapp.utils.Urls;
-import baajna.scroll.owner.mobioapp.activity.SingleSongActivity;
 import baajna.scroll.owner.mobioapp.datamodel.MoSong;
 import baajna.scroll.owner.mobioapp.localDatabase.DbManager;
 import baajna.scroll.owner.mobioapp.services.MusicService;
 import baajna.scroll.owner.mobioapp.utils.Globals;
-
-import com.squareup.picasso.Picasso;
-
-import java.util.ArrayList;
+import baajna.scroll.owner.mobioapp.utils.MyApp;
+import baajna.scroll.owner.mobioapp.utils.Urls;
 
 /**
  * Created by Jewel on 1/18/2016.
@@ -33,16 +30,18 @@ public class AdDownload extends RecyclerView.Adapter<AdDownload.MyViewHolder> {
     private LayoutInflater inflater;
     private Context context;
     private boolean isEditable;
+    private MusicService musicService;
 
-    public AdDownload(Context context) {
+    public AdDownload(Context context,MusicService musicService) {
         songs = new ArrayList<>();
         this.context = context;
+        this.musicService=musicService;
         inflater = LayoutInflater.from(context);
     }
 
-    public void setData(ArrayList<MoSong> albumList,boolean isEditable) {
+    public void setData(ArrayList<MoSong> albumList, boolean isEditable) {
         this.songs = albumList;
-        this.isEditable=isEditable;
+        this.isEditable = isEditable;
         notifyDataSetChanged();
     }
 
@@ -72,31 +71,30 @@ public class AdDownload extends RecyclerView.Adapter<AdDownload.MyViewHolder> {
         return songs.size();
     }
 
+
     class MyViewHolder extends RecyclerView.ViewHolder {
 
-        public ImageView imgAlbum,imgSongDetails,imgDelete;
+        public ImageView imgAlbum, imgSongDetails, imgDelete;
         public TextView tvTitle;
 
         public MyViewHolder(View itemView) {
             super(itemView);
             imgAlbum = (ImageView) itemView.findViewById(R.id.img_song_album_cover);
-            imgDelete= (ImageView) itemView.findViewById(R.id.img_song_delete);
+            imgDelete = (ImageView) itemView.findViewById(R.id.img_song_delete);
             tvTitle = (TextView) itemView.findViewById(R.id.tv_song_title);
             imgSongDetails = (ImageView) itemView.findViewById(R.id.img_song_detail_view_icon);
 
             itemView.findViewById(R.id.img_song_download_icon).setVisibility(View.GONE);
 
-            if(isEditable){
-                imgSongDetails.setVisibility(View.GONE);
-                imgDelete.setVisibility(View.VISIBLE);
-            }else{
-                imgSongDetails.setVisibility(View.VISIBLE);
-                itemView.findViewById(R.id.img_song_delete).setVisibility(View.GONE);
-            }
+
+            imgSongDetails.setVisibility(isEditable ? View.GONE : View.VISIBLE);
+            imgDelete.setVisibility(isEditable ? View.GONE : View.VISIBLE);
+
 
             imgDelete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+
                     int songId=songs.get(getAdapterPosition()).getId();
                     if(Globals.deletedSongIds!=null)
                         Globals.deletedSongIds=new ArrayList<Integer>();
@@ -116,17 +114,18 @@ public class AdDownload extends RecyclerView.Adapter<AdDownload.MyViewHolder> {
                     playList.setSongId(downloadedSong.getId());
 
                     long result = mydb.addToPlaylist(playList);
-                    MusicService.songs = mydb.getSongs(DbManager.SQL_SONGS_PLAYLIST_RUNNING);
+                    ArrayList<MoSong>songs=mydb.getSongs(DbManager.SQL_SONGS_PLAYLIST_RUNNING);
+                    musicService.setSongList(songs);
                     mydb.close();
 
-                    for (int i = 0; i < MusicService.songs.size(); i++) {
-                        if (downloadedSong.getId() == MusicService.songs.get(i).getId()) {
+                    for (int i = 0; i < songs.size(); i++) {
+                        if (downloadedSong.getId() == songs.get(i).getId()) {
                             MusicService.songPosn = i;
                             break;
                         }
                     }
                     //if (MusicService.isRunning) {
-                    MusicService.playSong(MusicService.songPosn);
+                    musicService.playSong(MusicService.songPosn);
 
 
                 }
@@ -135,9 +134,8 @@ public class AdDownload extends RecyclerView.Adapter<AdDownload.MyViewHolder> {
             imgSongDetails.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    MoSong song = songs.get(getAdapterPosition());
-                    //((MainActivity) context).replaceFrag(FragSingleSong.getInstance(song.getId()), song.getTitle());
-                    context.startActivity(new Intent(context, SingleSongActivity.class).putExtra("song_id", song.getId()));
+                    //MoSong song = songs.get(getAdapterPosition());
+                    //context.startActivity(new Intent(context, SingleSongActivity.class).putExtra("song_id", song.getId()));
                 }
             });
 

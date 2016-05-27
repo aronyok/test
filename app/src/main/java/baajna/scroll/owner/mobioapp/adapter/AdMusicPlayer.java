@@ -29,18 +29,18 @@ import java.util.ArrayList;
 /**
  * Created by Jewel on 2/2/2016.
  */
-public class AdMusicPlayer extends RecyclerView.Adapter<AdMusicPlayer.MyViewHolder> {
+public abstract class AdMusicPlayer extends RecyclerView.Adapter<AdMusicPlayer.MyViewHolder> {
     private ArrayList<MoSong> songs;
     private LayoutInflater inflater;
     private Context context;
     private View view;
     private boolean isEditable;
 
+
     public AdMusicPlayer(Context context) {
         this.context = context;
         inflater = LayoutInflater.from(context);
         songs = new ArrayList<>();
-
     }
 
     public void setSongs(ArrayList<MoSong> songs,boolean isEditable) {
@@ -132,12 +132,13 @@ public class AdMusicPlayer extends RecyclerView.Adapter<AdMusicPlayer.MyViewHold
                 @Override
                 public void onClick(View v) {
 
-                    MusicService.playSong(getAdapterPosition());
+                    onClickItem(v,getAdapterPosition());
 
 
                 }
             });
         }
     }
+    public abstract void onClickItem(View view,int position);
 
 }
